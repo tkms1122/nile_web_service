@@ -2,5 +2,5 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 # Create your views here.
-def main(request):
-    return HttpResponse("Hello EC2!")
+def index(request):
+    return render(request, "ec2/index.html")
