@@ -1,0 +1,37 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<!--<html lang="{{ LANGUAGE_CODE|default:"en-us" }}">-->
+<head>
+    <meta charset="UTF-8">
+    <title>EC2</title>
+    <link href="{% static 'ec2/css/ec2_main.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'ec2/css/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'ec2/css/style.css' %}">
+    <script src="{% static 'ec2/js/jquery-2.2.4.min.js' %}"></script>
+    <script src="{% static 'ec2/js/velocity.min.js' %}"></script>
+    <script src="{% static 'ec2/js/tabtab.min.js' %}"></script>
+</head>
+<body>
+<header>
+     <div class="navbar navbar-default">
+        <div class-"container-fluid">
+            <div class-"navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mynavbar-content">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"></a>
+            </div>
+        </div>
+    </div>
+</header>
+<article>
+    {% block tab %}
+    {% endblock %}
+</article>
+<footer>
+
+</footer>
+</body>
+</html>

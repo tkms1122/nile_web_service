@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block tab %}
+<div class="tabs">
+    <ul class="tabs__menu">
+        <li class="tabs__menu-item">
+            <a href="#">status</a>
+        </li>
+        <li class="tabs__menu-item">
+            <a href="#">terminal</a>
+        </li>
+        <li class="tabs__menu-item">
+            <a href="#">right</a>
+        </li>
+    </ul>
+    <div class="tabs__content">
+        <div class="tabs-item">
+            {% block status %}
+            {% endblock %}
+        </div>
+        <div class="tabs-item">
+            <iframe src="http://localhost:8082"></iframe>
+        </div>
+        <div class="tabs-item">
+            3
+        </div>
+    </div>
+</div>
+<script>
+$(function(){
+    $('.tabs').tabtab({
+        tabMenu: '.tabs__menu',             // メニュー部の要素を指定
+        tabContent: '.tabs__content',       // コンテンツ部分の要素を指定
+        next: '.tabs-controls__next',       // 次のスライドへ進むトリガー要素を指定
+        prev: '.tabs-controls__prev',       // 前のスライドへ戻るトリガー要素を指定
+
+        startSlide: 1,                      // ページをロードした時点でのスタートのタブ
+//        arrows: true,                       // キーボード・コントロール
+        dynamicHeight: true,                // タブの高さを自動で調節
+        useAnimations: true,                // アニメーション処理の有効化・無効化
+
+        easing: 'ease',                     // イージングの処理を指定
+        speed: 350,                         // アニメーションのスピード
+        slideDelay: 0,                      // 遅延スタート
+        perspective: 1200,                  // 3D perspective を設定
+        transformOrigin: 'center top',      // 3D アニメーションの起点
+        perspectiveOrigin: '50% 50%',       // 3D perspective のアングルを指定
+
+        translateY: 0,
+        translateX: 0,
+        scale: 1,
+        rotateX: 0,
+        rotateY: 0,
+        skewY: 0,
+        skewX: 0,
+    });
+});
+</script>
+{% endblock %}

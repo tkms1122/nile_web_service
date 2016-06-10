@@ -1,0 +1,23 @@
+{% extends "ec2/tab.html" %}
+{% block status%}
+<div class="flex-container">
+    <div id="add"> <p style="text-align: center"> + </p> </div>
+</div>
+<script>
+
+$(function(){
+    var $grid = $('.flex-container'),
+            emptyCells = [],
+            i;
+// 子パネル (ul.cell) の数だけ空の子パネル (ul.cell.is-empty) を追加する。
+    for (i = 0; i < $grid.find('.flex-item').length; i++) {
+        emptyCells.push($('<div>', { class: ' is-empty' }));
+    }
+    $grid.append(emptyCells);
+    $('#add').click(function(){
+        $(this).before('<div class="flex-item"><h4>instance</h4></div>');
+        $grid.append($('<div>', { class: ' is-empty' }));
+    })
+});
+</script>
+{% endblock %}
