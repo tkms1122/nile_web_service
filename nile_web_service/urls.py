@@ -20,4 +20,3 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # url(r'^ec2/', 'ec2.views.main'),
     url(r'^ec2/', include('ec2.urls', namespace='ec2')),
-]

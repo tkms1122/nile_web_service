@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.conf.urls import patterns, url
 from ec2 import views
 
