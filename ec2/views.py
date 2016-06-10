@@ -7,4 +7,4 @@ def main(request):
     return HttpResponse("Hello EC2!")
 
 def tab(request):
-    return render_to_response('ec2/tab.html', None , context_instance=RequestContext(request))
+    return render_to_response('ec2/flex.html', None , context_instance=RequestContext(request))

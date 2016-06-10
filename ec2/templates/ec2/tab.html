@@ -3,10 +3,10 @@
 <div class="tabs">
     <ul class="tabs__menu">
         <li class="tabs__menu-item">
-            <a href="#">left</a>
+            <a href="#">status</a>
         </li>
         <li class="tabs__menu-item">
-            <a href="#">center</a>
+            <a href="#">terminal</a>
         </li>
         <li class="tabs__menu-item">
             <a href="#">right</a>
@@ -14,10 +14,11 @@
     </ul>
     <div class="tabs__content">
         <div class="tabs-item">
-            <iframe src="http://localhost:8082"></iframe>
+            {% block status %}
+            {% endblock %}
         </div>
         <div class="tabs-item">
-            <iframe src="/ec2/"></iframe>
+            <iframe src="http://localhost:8082"></iframe>
         </div>
         <div class="tabs-item">
             3
@@ -47,11 +48,11 @@ $(function(){
         translateY: 0,
         translateX: 0,
         scale: 1,
-        rotateX: 90,
+        rotateX: 0,
         rotateY: 0,
         skewY: 0,
         skewX: 0,
     });
 });
 </script>
-{% endblock tab %}
+{% endblock %}
