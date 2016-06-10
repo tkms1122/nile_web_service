@@ -1,0 +1,25 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<!--<html lang="{{ LANGUAGE_CODE|default:"en-us" }}">-->
+<head>
+    <meta charset="UTF-8">
+    <title>EC2</title>
+    <link href="{% static 'ec2/css/ec2_main.css' %}" rel="stylesheet">
+    <script src="{% static 'ec2/js/jquery-2.2.4.min.js' %}"></script>
+    <script src="{% static 'ec2/js/velocity.min.js' %}"></script>
+    <script src="{% static 'ec2/js/tabtab.min.js' %}"></script>
+</head>
+<body>
+<header>
+    <img src="{% static 'ec2/images/nws_logo.png' %}" />
+</header>
+<article>
+    {% block tab %}
+    {{ tab }}
+    {% endblock %}
+</article>
+<footer>
+
+</footer>
+</body>
+</html>
