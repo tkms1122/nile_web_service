@@ -3,14 +3,6 @@ from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 
-# Create your views here.
-# def login(request):
-#     return render(request, reverse("accounts:login"))
-
-
-# def signup(request):
-#     return render(request, reverse("accounts:signup"))
-
 class AccountCreateView(CreateView):
     model = User
 
