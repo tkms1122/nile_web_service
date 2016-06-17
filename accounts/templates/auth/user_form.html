@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+
 {# 新規登録時はobject(=model)のIDが登録されていないはず #}
 {% if object.id %}
     <h1>Update User</h1>
@@ -16,3 +19,4 @@
         </fieldset>
     </form>
 </div>
+{% endblock %}
