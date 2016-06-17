@@ -1,0 +1,18 @@
+{# 新規登録時はobject(=model)のIDが登録されていないはず #}
+{% if object.id %}
+    <h1>Update User</h1>
+{% else %}
+    <h1>Create User</h1>
+{% endif %}
+
+<div id="main">
+    <form method="post" action="">
+        <fieldset>
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <input type="submit" id="save" value="Save">
+        </fieldset>
+    </form>
+</div>
