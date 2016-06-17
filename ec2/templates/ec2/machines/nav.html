@@ -1,27 +1,15 @@
-{% extends "base.html" %}
-{% block tab %}
+{% extends "ec2/base.html" %}
+{% block content %}
 <div class="tabs">
     <ul class="tabs__menu">
         <li class="tabs__menu-item">
-            <a href="#">status</a>
-        </li>
-        <li class="tabs__menu-item">
-            <a href="#">terminal</a>
-        </li>
-        <li class="tabs__menu-item">
-            <a href="#">right</a>
+            <a href="#">Your Instances</a>
         </li>
     </ul>
     <div class="tabs__content">
         <div class="tabs-item">
-            {% block status %}
+            {% block instance %}
             {% endblock %}
-        </div>
-        <div class="tabs-item">
-            <iframe src="http://localhost:8082"></iframe>
-        </div>
-        <div class="tabs-item">
-            3
         </div>
     </div>
 </div>
