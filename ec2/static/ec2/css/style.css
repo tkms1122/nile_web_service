@@ -1,6 +1,18 @@
 .navbar-brand {
     background: url("../../img/logo.png") no-repeat left center;
     background-size: contain;
-    height: 70px;
-    width:150px;
+    height: 40px;
+    width:86px;
+}
+
+.badge-gray {
+    background-color: gray
+}
+
+.badge-green {
+    background-color: #b0cc70
+}
+
+.badge-yellow {
+    background-color: #eebb11
 }

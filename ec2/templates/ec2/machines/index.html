@@ -5,6 +5,7 @@
 </div>
 <script>
 
+
 $(function(){
     var $grid = $('.flex-container'),
             emptyCells = [],
@@ -20,4 +21,11 @@ $(function(){
     })
 });
 </script>
+
+<ul class="list-group">
+{% for machine in machines %}
+<li class="list-group-item">{{machine.name}}<span class="badge {{machine.getstatecolor}}">{{machine.getstate}}</span></li>
+{% endfor %}
+</ul>
+
 {% endblock %}
