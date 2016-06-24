@@ -8,22 +8,34 @@
     <link rel="stylesheet" type="text/css" href="{% static 'ec2/css/bootstrap.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'ec2/css/style.css' %}">
     <script src="{% static 'ec2/js/jquery-2.2.4.min.js' %}"></script>
+    <script src="{% static 'ec2/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'ec2/js/velocity.min.js' %}"></script>
     <script src="{% static 'ec2/js/tabtab.min.js' %}"></script>
 </head>
 <body>
 <header>
      <div class="navbar navbar-default">
-        <div class-"container-fluid">
-            <div class-"navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mynavbar-content">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#"></a>
-            </div>
+        <a class="navbar-brand" href="#"></a>
+        <div class="collapse navbar-collapse navbar-right">
+        {% if user.is_authenticated %}
+        <p> hello </p>
+        {% else %}
+        <ul class="nav navbar-nav">
+            <li><a href="#">サインアップ</a></li>
+            <li><a href="#">ログイン</a></li>
+        </ul>
+        {% endif %}
         </div>
+        <!-- <div class-"container-fluid"> -->
+            <!-- <div class-"navbar-header"> -->
+                <!-- <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mynavbar-content"> -->
+                    <!-- <span class="icon-bar"></span> -->
+                    <!-- <span class="icon-bar"></span> -->
+                    <!-- <span class="icon-bar"></span> -->
+                <!-- </button> -->
+                <!-- <a class="navbar-brand" href="#"></a> -->
+            <!-- </div> -->
+        <!-- </div> -->
     </div>
 </header>
 <article>
