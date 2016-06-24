@@ -3,8 +3,10 @@ from django.template import RequestContext
 from django.http import HttpResponse
 from django.core.context_processors import csrf
 from .models import Machine
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
+
+@login_required(login_url="/")
 def machines_index(request):
     machines = Machine.objects.all()
     return render_to_response('ec2/machines/index.html', {'machines': machines} , context_instance=RequestContext(request))
