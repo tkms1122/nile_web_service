@@ -1,7 +1,7 @@
-from django.shortcuts import render
 from django.views.generic import CreateView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 class AccountCreateView(CreateView):
     model = User
@@ -9,4 +9,4 @@ class AccountCreateView(CreateView):
     form_class = UserCreationForm
 
     def get_success_url(self):
-        return reverse('my:user_creation')
+        return reverse('ec2:root')
