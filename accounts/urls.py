@@ -27,5 +27,4 @@ urlpatterns = patterns('',
         name='pwd_change_done'
     ),
     url(r'^user-creation/$', views.AccountCreateView.as_view(), name='user_creation'),
-    url(r'^(?P<pk>[0-9]+)/update/$', views.AccountUpdateView.as_view(), name='user_change'),
 )
