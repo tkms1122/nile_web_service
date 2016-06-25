@@ -1,10 +1,7 @@
-{% extends "ec2/machines/nav.html" %}
-{% block instance%}
-<div class="flex-container">
-    <div id="add"> <p style="text-align: center"> + </p> </div>
-</div>
-<script>
+{% extends "base.html" %}
+{% block content%}
 
+<script>
 
 $(function(){
     var $grid = $('.flex-container'),
@@ -22,10 +19,21 @@ $(function(){
 });
 </script>
 
+<div class="container">
+
+<div class="row row-center va-bottom">
+    <div class="col-xs-10">
+        <h1>Instance List</h1>
+    </div><div class="col-xs-1" >
+        <a href="#" class="btn btn-primary">New Instance</a>
+    </div>
+</div>
+
 <ul class="list-group">
 {% for machine in machines %}
 <li class="list-group-item">{{machine.name}}<span class="badge {{machine.getstatecolor}}">{{machine.getstate}}</span></li>
 {% endfor %}
 </ul>
+</div>
 
 {% endblock %}
