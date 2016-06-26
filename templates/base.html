@@ -35,8 +35,28 @@
                             </ul>
                         </li>
                         {% else %}
-                        <li><a href="{% url 'accounts:user_creation' %}">サインアップ</a></li>
-                        <li><a href="{% url 'accounts:login_with_template' %}">ログイン</a></li>
+                        {% block signin %}
+                        {% endblock %}
+                        {% block login %}
+                        {% endblock %}
+                        <script>
+                            $(function() {
+                                $('[data-toggle=popover]').popover().on("mouseenter", function () {
+                                    var _this = this;
+                                    $(this).popover("show");
+                                    $(this).siblings(".popover").on("mouseleave", function () {
+                                        $(_this).popover('hide');
+                                    });
+                                }).on("mouseleave", function () {
+                                    var _this = this;
+                                    setTimeout(function () {
+                                        if (!$(".popover:hover").length) {
+                                            $(_this).popover("hide")
+                                        }
+                                    }, 100);
+                                });
+                            });
+                        </script>
                         {% endif %}
                     </ul>
                 </div>

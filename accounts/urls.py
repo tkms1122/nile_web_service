@@ -4,7 +4,8 @@ from django.contrib.auth import views as auth_views
 from django.core.urlresolvers import reverse_lazy
 
 urlpatterns = patterns('',
-    url(r'^login/$', 'django.contrib.auth.views.login', name='login_with_template'),
+    # url(r'^login/$', 'django.contrib.auth.views.login', name='login_with_template'),
+    url(r'^login/$', views.log_in, name='login_with_template'),
     url(r'^logout/$', auth_views.logout,
     {
         'template_name': 'accounts/logged_out.html',
@@ -27,4 +28,5 @@ urlpatterns = patterns('',
         name='pwd_change_done'
     ),
     url(r'^user-creation/$', views.AccountCreateView.as_view(), name='user_creation'),
+    url(r'^signin/$',views.signin),
 )

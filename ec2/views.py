@@ -4,12 +4,23 @@ from django.http import HttpResponse
 from django.core.context_processors import csrf
 from .models import Machine
 from django.contrib.auth.decorators import login_required
+from django import forms
 
+class RegistrationForm(forms.Form):
+    username = forms.CharField(required=True,label='Your name',max_length=30)
+    password = forms.CharField(widget=forms.PasswordInput(), min_length=4)
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(required=True)
+    password = forms.CharField(required=True,widget=forms.PasswordInput(), min_length=4)
 
 @login_required(login_url="/")
 def machines_index(request):
     machines = Machine.objects.all()
-    return render_to_response('ec2/machines/index.html', {'machines': machines} , context_instance=RequestContext(request))
+    s_form = RegistrationForm()
+    l_form = LoginForm()
+    return render_to_response('ec2/machines/index.html', {'machines': machines,'singin': s_form,'login' : l_form} , context_instance=RequestContext(request))
 
 def machines_launcher(request):
     if request.user.is_authenticated():
