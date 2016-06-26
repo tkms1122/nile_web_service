@@ -5,8 +5,7 @@ from django.core.context_processors import csrf
 from .models import Machine
 from django.contrib.auth.decorators import login_required
 from django import forms
-import json
-import uuid
+import json, uuid, os
 
 class SignupForm(forms.Form):
     username = forms.CharField(required=True,label='Your name',max_length=30)
@@ -43,6 +42,14 @@ def machines_launch(request):
             res['stat'] = m.getstate()
             res['statcolor'] = m.getstatecolor()
             m.save()
+            ssh_key_name = '{0}_{1}'.format(request.user.username, machine_name)
+            os.system('ssh-keygen -b 4096 -t rsa -N "" -f /tmp/{0}'.format(ssh_key_name))
+            os.system('scp /tmp/{0}.pub cloudA1-2:/tmp/{0}.pub'.format(ssh_key_name))
+            # os.system('ssh cloudA1-2 "sudo bash /home/nws/create.bash {vm_name} {pub_key} {ip}"'.format(
+            #     vm_name=machine_token,
+            #     pub_key='/tmp/{0}.pub'.format(ssh_key_name),
+            #     ip='hoge'
+            # ))
     return HttpResponse(json.dumps(res))
     
 def machines_destroy(request, machine_token):
