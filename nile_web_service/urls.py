@@ -16,9 +16,10 @@ Including another URLconf
 
 from django.conf.urls import url, include
 from django.contrib import admin
+from nile_web_service import views
 
 urlpatterns = [
-    # url(r'^$', ),TODO
+    url(r'^$', views.welcome),
     url(r'^admin/', admin.site.urls),
     url(r'^ec2/', include('ec2.urls', namespace='ec2')),
     url(r'^accounts/', include('accounts.urls', namespace='accounts')),
