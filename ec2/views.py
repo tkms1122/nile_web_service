@@ -2,8 +2,7 @@ from django.shortcuts import render, render_to_response, redirect
 from django.template import RequestContext
 from django.http import HttpResponse
 from django.core.context_processors import csrf
-from .models import Machine
-from .models import IP
+from .models import Machine, IP
 from django.contrib.auth.decorators import login_required
 from django.forms import ModelForm
 from django.contrib.auth.models import User
@@ -84,6 +83,12 @@ def machines_launch(request):
 
         isvalid = validate(machine_name, cpu_core, memory_size, machine_token, ip)
         res['isvalid'] = isvalid
+
+        unusedIPs = IP.objects.filter(is_used=False)
+        ip = unusedIPs[0] if len(unusedIPs) > 0 else None
+        ip.is_used = True
+        ip.save()
+
         if isvalid:
             #　machineテーブルに追加
             m = Machine(auth_user=request.user, ip=ip, machine_token=machine_token, name=machine_name, core=cpu_core, memory=memory_size, status=0)
