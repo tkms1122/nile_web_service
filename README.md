@@ -7,10 +7,22 @@
 
 #### python環境の構築
 
+pyenvとvirtualenvの環境を構築。
 ```
 $ brew install pyenv
 $ brew install pyenv-virtualenv
+```
 
+pythonがpyenvの方を向くように設定。
+.bashrcなどに以下を記述。
+```
+export PYENV_ROOT="${HOME}/.pyenv"
+export PATH=${PYENV_ROOT}/bin:$PATH
+eval "$(pyenv init -)"
+```
+
+プロジェクトの環境を構築
+```
 $ git clone git@github.com:chikyukotei/nile_web_service.git
 $ cd nile_web_service
 
