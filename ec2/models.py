@@ -1,8 +1,10 @@
+from django.conf import settings
 from django.db import models
 
 class Machine(models.Model):
     ''' A representation of instance.'''
-    owner = models.CharField(max_length=256, default="") # owner's name
+    auth_user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    machine_token = models.CharField(unique=True, max_length=256)
     name = models.CharField(max_length=256, default="") # machine's name
     core = models.PositiveIntegerField(default=1) # number of cpu cores
     memory = models.PositiveIntegerField(default=1) # memory (GB)
