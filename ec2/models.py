@@ -1,6 +1,13 @@
 from django.conf import settings
 from django.db import models
 
+class IP(models.Model):
+    address = models.PositiveIntegerField()
+    is_used = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "IP"
+
 class Machine(models.Model):
     ''' A representation of instance.'''
     auth_user = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -9,6 +16,7 @@ class Machine(models.Model):
     core = models.PositiveIntegerField(default=1) # number of cpu cores
     memory = models.PositiveIntegerField(default=1) # memory (GB)
     status = models.PositiveIntegerField(default=0) # status
+    ip = models.OneToOneField(IP)
 
     STATUS = {
             0: 'Stopped',
