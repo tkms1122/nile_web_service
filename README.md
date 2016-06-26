@@ -1,5 +1,8 @@
-nile web service
+# nile web service
 ---
 
-cloud A1 team
+## 必要なライブラリのインストール
 
+```
+$ pip install -r requirements.txt
+```
