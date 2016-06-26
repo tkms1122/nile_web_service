@@ -5,6 +5,25 @@
     width:108px;
 }
 
+.public-banner .logo {
+    position: relative;
+    top: 10%;
+    height: 164px;
+    width: auto;
+}
+
+.public-banner {
+    background: url("../../img/egypt.jpg") no-repeat center;
+    padding: 0;
+    width: 80%;
+    height: 434px;
+}
+
+.public-banner img {
+    width: 100%;
+    height: auto;
+}
+
 .badge-gray {
     background-color: gray
 }
