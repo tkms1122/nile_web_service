@@ -8,7 +8,7 @@ from django import forms
 import json
 import uuid
 
-class RegistrationForm(forms.Form):
+class SignupForm(forms.Form):
     username = forms.CharField(required=True,label='Your name',max_length=30)
     password = forms.CharField(widget=forms.PasswordInput(), min_length=4)
 
@@ -20,9 +20,9 @@ class LoginForm(forms.Form):
 @login_required(login_url="/")
 def machines_index(request):
     machines = Machine.objects.all()
-    s_form = RegistrationForm()
+    s_form = SignupForm()
     l_form = LoginForm()
-    return render_to_response('ec2/machines/index.html', {'machines': machines,'singin': s_form,'login' : l_form} , context_instance=RequestContext(request))
+    return render_to_response('ec2/machines/index.html', {'machines': machines,'singup': s_form,'login' : l_form} , context_instance=RequestContext(request))
 
 def machines_launch(request):
     def validate(name,core,mem,token):

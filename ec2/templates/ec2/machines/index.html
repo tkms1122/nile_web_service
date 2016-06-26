@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block signin %}
+{% block signup %}
 <li><a href="#"
        data-toggle="popover"
        data-placement="bottom"
        data-container="body"
-       data-content='<form method="POST" action="/accounts/signin/" autocomplete="off">
-                     {{singin}}
+       data-content='<form method="POST" action="/accounts/signup/" autocomplete="off">
+                     {{singup}}
                      <br>
-                     <input type="submit" id="signin" value="signin">
+                     <input type="submit" id="signup" value="signup">
                      </form>'
-       data-html="true">signin</a></li>
+       data-html="true">サインアップ</a></li>
 {% endblock %}
 {% block login %}
 <li><a href="#"
@@ -20,7 +20,7 @@
                     {{login}}
                     <input type="submit" id="login" value="login">
                     </form>'
-       data-html="true">login</a></li>
+       data-html="true">ログイン</a></li>
 {% endblock %}
 {% block content%}
 

@@ -28,5 +28,5 @@ urlpatterns = patterns('',
         name='pwd_change_done'
     ),
     url(r'^user-creation/$', views.AccountCreateView.as_view(), name='user_creation'),
-    url(r'^signin/$',views.signin),
+    url(r'^signup/$',views.signup),
 )

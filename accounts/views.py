@@ -4,7 +4,7 @@ from django.views.generic import CreateView
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from ec2.views import RegistrationForm, LoginForm
+from ec2.views import SignupForm, LoginForm
 from django.core.urlresolvers import reverse
 
 class AccountCreateView(CreateView):
@@ -15,11 +15,11 @@ class AccountCreateView(CreateView):
     def get_success_url(self):
         return reverse('my:user_creation')
 
-def signin(request):
+def signup(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = RegistrationForm(request.POST)
+        form = SignupForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
