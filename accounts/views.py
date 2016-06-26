@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate,login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from ec2.views import RegistrationForm, LoginForm
-
+from django.core.urlresolvers import reverse
 
 class AccountCreateView(CreateView):
     model = User
@@ -45,3 +45,4 @@ def log_in(request):
                 if user.is_active:
                     login(request, user)
     return redirect('ec2:root')
+
