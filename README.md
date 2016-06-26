@@ -43,6 +43,7 @@ $ pip install -r requirements.txt
 ```
 $ python manage.py makemigrations ec2 # ec2/models.pyの中身からmigrationファイルを作成
 $ python manage.py migrate # dbに反映
+$ python manage.py loaddata IP.json #IPアドレス管理用テーブルに初期データ追加
 ```
 
 #### サーバ立ち上げ
