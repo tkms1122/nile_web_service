@@ -1,6 +1,34 @@
 .navbar-brand {
     background: url("../../img/logo.png") no-repeat left center;
     background-size: contain;
-    height: 70px;
-    width:150px;
+    height: 50px;
+    width:108px;
+}
+
+.badge-gray {
+    background-color: gray
+}
+
+.badge-green {
+    background-color: #b0cc70
+}
+
+.badge-yellow {
+    background-color: #eebb11
+}
+
+.row-center.va-middle > [class*='col-'] {
+    display: inline-block;
+    float: none;
+    vertical-align:middle;
+}
+
+.row-center.va-bottom > [class*='col-'] {
+    display: inline-block;
+    float: none;
+    vertical-align:bottom;
+}
+
+.btn {
+    margin-bottom: 5px;
 }
