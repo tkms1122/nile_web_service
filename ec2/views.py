@@ -82,4 +82,5 @@ def machines_downloadkey(request, machine_token):
     # ユーザにDLさせる鍵は~.pemの形に
     response['Content-Type'] = 'application/force-download'
     response['Content-Disposition'] = 'filename={0}.pem'.format(private_key)
+    os.system('rm /tmp/{0}'.format(private_key))
     return response
