@@ -26,7 +26,7 @@ def machines_index(request):
 
 def machines_launch(request):
     def validate(name,core,mem,token,ip):
-        # FIXED
+        # TODO: invalidの理由を含める
         if ip == None:
             return False
         elif len(name) <= 3:
@@ -40,15 +40,15 @@ def machines_launch(request):
         machine_name = request.GET['machine_name']
         cpu_core = request.GET['cpu_core']
         memory_size = request.GET['memory']
-        # FIXED
-        #q = IP.objects.filter(is_used=False)[:1]
-        ip = 'object' # is_usedじゃないレコードのオブジェクト
+
+        unusedIPs = IP.objects.filter(is_used=False)
+        ip = unusedIPs[0] if len(unusedIPs) > 0 else None
 
         isvalid = validate(machine_name, cpu_core, memory_size, machine_token, ip)
         res['isvalid'] = isvalid
         if isvalid:
-            m = Machine(auth_user=request.user, ip=ip, machine_token=machine_token, name=machine_name, core=cpu_core,
-                        memory=memory_size, status=0)
+            #　machineテーブルに追加
+            m = Machine(auth_user=request.user, ip=ip, machine_token=machine_token, name=machine_name, core=cpu_core, memory=memory_size, status=0)
             res['name'] = machine_name
             res['core'] = cpu_core
             res['stat'] = m.getstate()
@@ -56,18 +56,19 @@ def machines_launch(request):
             m.save()
             ip.is_used = True
             ip.save()
-            # 以下でsshkeyのペアを作成
+
+            # 鍵生成
             ssh_key_name = '{0}_{1}'.format(request.user.username, machine_name)
             os.system('ssh-keygen -b 4096 -t rsa -N "" -f /tmp/{0}'.format(ssh_key_name))
             os.system('scp /tmp/{0}.pub cloudA1-2:/tmp/{0}.pub'.format(ssh_key_name))
             os.system('rm /tmp/{0}.pub'.format(ssh_key_name))
             os.system('ssh cloudA1-2 "sudo bash /home/nws/create.bash {vm_name} {pub_key} {ip}"'.format(
-                vm_name=machine_token,
-                pub_key='/tmp/{0}.pub'.format(ssh_key_name),
-                ip=ip.address
+                vm_name = machine_token,
+                pub_key = '/tmp/{0}.pub'.format(ssh_key_name),
+                ip = ip.address
             ))
     return HttpResponse(json.dumps(res))
-    
+
 def machines_destroy(request, machine_token):
     if request.user.is_authenticated():
         m = Machine.objects.get(machine_token=machine_token)
