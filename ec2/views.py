@@ -42,6 +42,7 @@ def machines_launch(request):
             res['stat'] = m.getstate()
             res['statcolor'] = m.getstatecolor()
             m.save()
+            # 以下でsshkeyのペアを作成
             ssh_key_name = '{0}_{1}'.format(request.user.username, machine_name)
             os.system('ssh-keygen -b 4096 -t rsa -N "" -f /tmp/{0}'.format(ssh_key_name))
             os.system('scp /tmp/{0}.pub cloudA1-2:/tmp/{0}.pub'.format(ssh_key_name))
@@ -61,7 +62,8 @@ def machines_destroy(request, machine_token):
 
 def machines_downloadkey(request, machine_token):
     m = Machine.objects.get(machine_token=machine_token)
-    pub_key = '{0}_{1}.pub'.format(request.user.username, m.machine_name)
-    response = HttpResponse(open('/tmp/{0}'.format(pub_key),'rb').read(), content_type='text/plain')
-    response['Content-Disposition'] = 'filename={0}'.format(pub_key)
+    private_key = '{0}_{1}'.format(request.user.username, m.machine_name)
+    response = HttpResponse(open('/tmp/{0}'.format(private_key),'rb').read(), content_type='text/plain')
+    # ユーザにDLさせる鍵は~.pemの形に
+    response['Content-Disposition'] = 'filename={0}.pem'.format(private_key)
     return response
