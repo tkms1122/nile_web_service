@@ -60,4 +60,8 @@ def machines_destroy(request, machine_token):
     return HttpResponse('done')
 
 def machines_downloadkey(request, machine_token):
-    return HttpResponse('Download Key')
+    m = Machine.objects.get(machine_token=machine_token)
+    pub_key = '{0}_{1}.pub'.format(request.user.username, m.machine_name)
+    response = HttpResponse(open('/tmp/{0}'.format(pub_key),'rb').read(), content_type='text/plain')
+    response['Content-Disposition'] = 'filename={0}'.format(pub_key)
+    return response
