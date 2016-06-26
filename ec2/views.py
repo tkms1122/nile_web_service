@@ -57,7 +57,7 @@ def machines_launch(request):
             ip.is_used = True
             ip.save()
 
-            # 鍵生成
+            # 鍵生成&VM立ち上げ
             ssh_key_name = '{0}_{1}'.format(request.user.username, machine_name)
             os.system('ssh-keygen -b 4096 -t rsa -N "" -f /tmp/{0}'.format(ssh_key_name))
             os.system('scp /tmp/{0}.pub cloudA1-2:/tmp/{0}.pub'.format(ssh_key_name))
@@ -77,8 +77,9 @@ def machines_destroy(request, machine_token):
 
 def machines_downloadkey(request, machine_token):
     m = Machine.objects.get(machine_token=machine_token)
-    private_key = '{0}_{1}'.format(request.user.username, m.machine_name)
+    private_key = '{0}_{1}'.format(request.user.username, m.name)
     response = HttpResponse(open('/tmp/{0}'.format(private_key),'rb').read(), content_type='text/plain')
     # ユーザにDLさせる鍵は~.pemの形に
+    response['Content-Type'] = 'application/force-download'
     response['Content-Disposition'] = 'filename={0}.pem'.format(private_key)
     return response
