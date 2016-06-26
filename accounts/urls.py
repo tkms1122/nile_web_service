@@ -6,11 +6,8 @@ from django.core.urlresolvers import reverse_lazy
 urlpatterns = patterns('',
     # url(r'^login/$', 'django.contrib.auth.views.login', name='login_with_template'),
     url(r'^login/$', views.log_in, name='login_with_template'),
-    url(r'^logout/$', auth_views.logout,
-    {
-        'template_name': 'accounts/logged_out.html',
-    },
-    name='logout_with_template'
+    url(r'^logout/$', 'django.contrib.auth.views.logout',
+        {'next_page': '/'},name='logout'
     ),
     url(r'^password-change/$',
         auth_views.password_change,
