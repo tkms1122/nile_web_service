@@ -1,4 +1,27 @@
 {% extends "base.html" %}
+{% block signin %}
+<li><a href="#"
+       data-toggle="popover"
+       data-placement="bottom"
+       data-container="body"
+       data-content='<form method="POST" action="/accounts/signin/" autocomplete="off">
+                     {{singin}}
+                     <br>
+                     <input type="submit" id="signin" value="signin">
+                     </form>'
+       data-html="true">signin</a></li>
+{% endblock %}
+{% block login %}
+<li><a href="#"
+       data-toggle="popover"
+       data-placement="bottom"
+       data-container="body"
+       data-content='<form method="POST" action="/accounts/login/">
+                    {{login}}
+                    <input type="submit" id="login" value="login">
+                    </form>'
+       data-html="true">login</a></li>
+{% endblock %}
 {% block content %}
 {% load staticfiles %}
 <div class="contents">
