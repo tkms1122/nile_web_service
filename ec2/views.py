@@ -51,3 +51,5 @@ def machines_destroy(request, machine_token):
         m.delete()
     return HttpResponse('done')
 
+def machines_downloadkey(request, machine_token):
+    return HttpResponse('Download Key')

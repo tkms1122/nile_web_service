@@ -38,6 +38,7 @@
 {% for machine in machines %}
 <li class="list-group-item">{{machine.name}}
     <button id="destroy-{{machine.machine_token}}">Destroy</button>
+    <a href="{% url "ec2:launch" %}/../downloadkey-{{machine.machine_token}}">Download Key</a>
     <span class="badge {{machine.getstatecolor}}">{{machine.getstate}}</span></li>
 {% endfor %}
 </ul>
