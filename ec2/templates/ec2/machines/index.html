@@ -125,18 +125,48 @@ $(function() {
             url: '{% url "ec2:launch" %}/../' + this.id, 
             success: function(data, dataType) {
                 alert('destroyed. please reload')
-    $('#testbutton').click(function(event) {
-        $.ajax({
-            dataType: 'text',
-            url: '{% url "ec2:getlist" %}',
-            success: function(data, dataType) {
-                alert('hello')
             },
             error: function(request, stat, err) {
                 alert('通信に失敗しました: ' + stat)
             }
         });
     });
+
+    $('#testbutton').click(function(event) {
+        $.ajax({
+            dataType: 'text',
+            url: '{% url "ec2:getlist" %}',
+            success: function(data, dataType) {
+                alert(data)
+            },
+            error: function(request, stat, err) {
+                alert('通信に失敗しました:' + stat)
+            }
+        });
+    });
+
+    load_list = function() {
+        $.ajax({
+            dataType: 'json',
+            url: '{% url "ec2:getlist" %}',
+            success: function(data, dataType) {
+                $('.list-group').append('<li class="list-group-item">' +
+                            data['name'] + '<span class="badge ' + data['statcolor'] + '">' +
+                            data['stat'] + '</span></li>')
+            },
+            error: function(request, stat, err) {
+                alert('通信に失敗しました:' + stat)
+            }
+        });
+    }
+
+    $(function() {
+        $('.list-group')
+    });
+
+<li class="list-group-item">{{machine.name}}
+    <button id="destroy-{{machine.machine_token}}">Destroy</button>
+    <span class="badge {{machine.getstatecolor}}">{{machine.getstate}}</span></li>
 })
 
 </script>

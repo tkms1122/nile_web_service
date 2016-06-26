@@ -56,10 +56,15 @@ def machines_getlist(request):
     if request.user.is_authenticated():
         machines = Machine.objects.all()
         machines = filter(lambda m: m.auth_user.username == request.user.username, machines)
-        enumerate idx, machine in machines:
+        for idx, m in enumerate(machines):
             instance = {
-                    'username': machine.auth_user.username,
+                    'username': m.auth_user.username,
+                    'machine_token': m.machine_token,
+                    'name': m.name,
+                    'core': m.core,
+                    'memory': m.memory,
+                    'status': m.status
             }
-            res[idx] =
-        return HttpResponse(json.dumps(machines))
+            res[idx] = instance
+        return HttpResponse(json.dumps(res))
     return HttpResponse(json.dumps(res))
