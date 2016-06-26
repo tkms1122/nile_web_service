@@ -45,3 +45,9 @@ def machines_launch(request):
             m.save()
     return HttpResponse(json.dumps(res))
     
+def machines_destroy(request, machine_token):
+    if request.user.is_authenticated():
+        m = Machine.objects.get(machine_token=machine_token)
+        m.delete()
+    return HttpResponse('done')
+

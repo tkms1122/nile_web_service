@@ -36,7 +36,9 @@
 
 <ul class="list-group">
 {% for machine in machines %}
-<li class="list-group-item">{{machine.name}}<span class="badge {{machine.getstatecolor}}">{{machine.getstate}}</span></li>
+<li class="list-group-item">{{machine.name}}
+    <button id="destroy-{{machine.machine_token}}">Destroy</button>
+    <span class="badge {{machine.getstatecolor}}">{{machine.getstate}}</span></li>
 {% endfor %}
 </ul>
 </div>
@@ -114,7 +116,21 @@ $(function() {
             }
         });
     });
+
+    $('[id^=destroy]').click(function(event) {
+        $.ajax({
+            dataType: 'text',
+            url: '{% url "ec2:launch" %}/../' + this.id, 
+            success: function(data, dataType) {
+                alert('destroyed. please reload')
+            },
+            error: function(request, stat, err) {
+                alert('通信に失敗しました: ' + stat)
+            }
+        });
+    });
 })
+
 </script>
 
 {% endblock %}
