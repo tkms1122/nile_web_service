@@ -1,0 +1,58 @@
+[
+  {
+    "model": "ec2.ip",
+    "pk": 1,
+    "fields": {
+      "address": 113,
+      "is_used": false
+    }
+  },
+  {
+    "model": "ec2.ip",
+    "pk": 2,
+    "fields": {
+      "address": 114,
+      "is_used": false
+    }
+  },
+  {
+    "model": "ec2.ip",
+    "pk": 3,
+    "fields": {
+      "address": 115,
+      "is_used": false
+    }
+  },
+  {
+    "model": "ec2.ip",
+    "pk": 4,
+    "fields": {
+      "address": 116,
+      "is_used": false
+    }
+  },
+  {
+    "model": "ec2.ip",
+    "pk": 5,
+    "fields": {
+      "address": 117,
+      "is_used": false
+    }
+  },
+  {
+    "model": "ec2.ip",
+    "pk": 6,
+    "fields": {
+      "address": 118,
+      "is_used": false
+    }
+  },
+  {
+    "model": "ec2.ip",
+    "pk": 7,
+    "fields": {
+      "address": 119,
+      "is_used": false
+    }
+  }
+]
