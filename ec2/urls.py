@@ -7,6 +7,7 @@ urlpatterns = patterns('',
                        url(r'^machines/$', views.machines_index, name='machines'),
                        url(r'^machines/launch$', views.machines_launch, name='launch'),
                        url(r'^machines/destroy-(?P<machine_token>.+)/$', views.machines_destroy, name='destroy'),
+                       url(r'^machines/list$', views.machines_getlist, name='getlist'),
                        # url(r'^machines/(\d+)$', views.machines_show),
                        # url(r'^machines/new$', views.machines_new),
                        # url(r'^machines/create$', views.machines_create), POST

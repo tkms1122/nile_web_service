@@ -51,3 +51,15 @@ def machines_destroy(request, machine_token):
         m.delete()
     return HttpResponse('done')
 
+def machines_getlist(request):
+    res = {}
+    if request.user.is_authenticated():
+        machines = Machine.objects.all()
+        machines = filter(lambda m: m.auth_user.username == request.user.username, machines)
+        enumerate idx, machine in machines:
+            instance = {
+                    'username': machine.auth_user.username,
+            }
+            res[idx] =
+        return HttpResponse(json.dumps(machines))
+    return HttpResponse(json.dumps(res))

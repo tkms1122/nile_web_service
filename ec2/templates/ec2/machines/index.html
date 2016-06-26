@@ -43,6 +43,8 @@
 </ul>
 </div>
 
+<button id="testbutton" class="btn btn-primary">getlist</button>
+
 <!-- modal -->
 <div class="modal fade" id="newInstanceModal">
     <div class="modal-dialog">
@@ -123,6 +125,12 @@ $(function() {
             url: '{% url "ec2:launch" %}/../' + this.id, 
             success: function(data, dataType) {
                 alert('destroyed. please reload')
+    $('#testbutton').click(function(event) {
+        $.ajax({
+            dataType: 'text',
+            url: '{% url "ec2:getlist" %}',
+            success: function(data, dataType) {
+                alert('hello')
             },
             error: function(request, stat, err) {
                 alert('通信に失敗しました: ' + stat)
