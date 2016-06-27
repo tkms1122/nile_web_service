@@ -104,8 +104,13 @@ def machines_stop(request, machine_token):
 # VM 削除
 def machines_destroy(request, machine_token):
     if request.user.is_authenticated():
-        # TODO: libvirtAPIからVMをundefine
         m = Machine.objects.get(machine_token=machine_token)
+        con = libvirt.open("qemu+tls://157.82.3.112/system")
+        dom = con.lookupByName(m.machine_token)
+        info = dom.info();
+        if info[0] != 5: #VIR_DOMAIN_SHUTOFF
+            dom.destroy()
+        dom.undefine()
         ip = m.ip
         ip.is_used = False
         ip.save()
