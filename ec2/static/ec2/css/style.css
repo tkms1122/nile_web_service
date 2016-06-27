@@ -1,0 +1,55 @@
+.navbar-brand {
+    background: url("../../img/logo.png") no-repeat left center;
+    background-size: contain;
+    height: 50px;
+    width:108px;
+}
+
+/* .public-banner .logo { */
+    /* position: relative; */
+    /* height: 164px; */
+    /* width: auto; */
+/* } */
+
+.public-banner {
+    position: relative;
+    background: url("../../img/egypt.jpg") no-repeat center;
+    padding: 0;
+    width: 100%;
+    max-width: 960px;
+    height: 434px;
+    vertical-align: middle;
+}
+
+.public-banner img {
+    position: absolute;
+    top: 67px;
+}
+
+.badge-gray {
+    background-color: gray
+}
+
+.badge-green {
+    background-color: #b0cc70
+}
+
+.badge-yellow {
+    background-color: #eebb11
+}
+
+.row-center.va-middle > [class*='col-'] {
+    display: inline-block;
+    float: none;
+    vertical-align:middle;
+}
+
+.row-center.va-bottom > [class*='col-'] {
+    display: inline-block;
+    float: none;
+    vertical-align:bottom;
+}
+
+.btn {
+    margin-bottom: 5px;
+}

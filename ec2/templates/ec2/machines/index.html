@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block signup %}
+<li><a href="#"
+       data-toggle="popover"
+       data-placement="bottom"
+       data-container="body"
+       data-content='<form method="POST" action="/accounts/signup/" autocomplete="off">
+                     {{singup}}
+                     <br>
+                     <input type="submit" id="signup" value="signup">
+                     </form>'
+       data-html="true">サインアップ</a></li>
+{% endblock %}
+{% block login %}
+<li><a href="#"
+       data-toggle="popover"
+       data-placement="bottom"
+       data-container="body"
+       data-content='<form method="POST" action="/accounts/login/">
+                    {{login}}
+                    <input type="submit" id="login" value="login">
+                    </form>'
+       data-html="true">ログイン</a></li>
+{% endblock %}
+{% block content%}
+
+<div class="container">
+
+<div class="row row-center va-bottom">
+    <div class="col-xs-10">
+        <h1 id="headerone">Instance List</h1>
+    </div><div class="col-xs-1" >
+        <button class="btn btn-primary" data-toggle="modal" data-target="#newInstanceModal">New Instance</a>
+    </div>
+</div>
+
+<ul class="list-group">
+{% for machine in machines %}
+<li class="list-group-item">{{machine.name}}
+    <button id="destroy-{{machine.machine_token}}">Destroy</button>
+    <a href="{% url 'ec2:launch' %}/../downloadkey-{{machine.machine_token}}">Download Key</a>
+    <span>157.82.3.{{ machine.ip.address }}</span>
+    <span class="badge {{machine.getstatecolor}}">{{machine.getstate}}</span>
+</li>
+{% endfor %}
+</ul>
+</div>
+
+<!-- modal -->
+<div class="modal fade" id="newInstanceModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">New Instance</h4>
+            </div>
+            <form id="newInstanceForm" class="form-horizontal" action="{% url 'ec2:launch' %}" method="POST">
+            {% csrf_token %}
+            <div class="modal-body">
+                    <div class="form-group">
+                        <label for="nameField" class="col-xs-2">Name</label>
+                        <div class="col-xs-10">
+                            <input type="text" class="form-control" name="machine_name" id="machine_name" placeholder="Machine Name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-2">CPU Core</label>
+                        <div class="col-xs-2">
+                            <input type="number" class="form-control" min="1" name="cpu_core" id="cpu_core" value="1" disabled="disabled"/>
+                            <input type="hidden" name="cpu_core" value="1"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-2">Memory(GB)</label>
+                        <div class="col-xs-2">
+                            <input type="number" class="form-control" min="1" name="memory" id="memory" value="1" disabled="disabled"/>
+                            <input type="hidden" name="memory" value="1"/>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-xs-10 col-xs-offset-2">
+                    <button type="submit" class="btn btn-primary">Launch</button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+<!-- modal setting -->
+var options = {
+    backdrop: "static",
+    keyboard: false,
+    show: false,
+    remote: false
+}
+
+$("#newInstanceModal").modal(options);
+
+$(function() {
+    $('#newInstanceForm').submit(function(event) {
+        event.preventDefault();
+        $.ajax({
+            dataType: 'json',
+            data: $('#newInstanceForm').serialize(),
+            url: '{% url "ec2:launch" %}', 
+            success: function(data, dataType) {
+                if (data['isvalid'] == true) {
+                    $('#newInstanceModal').modal('hide');
+                    $('#newInstanceForm')[0].reset();
+                    reload_list();
+                } else {
+                    alert('something is wrong')
+                }
+            },
+            error: function(request, stat, err) {
+                alert('通信に失敗しました: ' + stat)
+            }
+        });
+    });
+
+    $('[id^=destroy]').click(function(event) {
+        $.ajax({
+            dataType: 'text',
+            url: '{% url "ec2:launch" %}/../' + this.id, 
+            success: function(data, dataType) {
+                alert('destroyed. please reload')
+            },
+            error: function(request, stat, err) {
+                alert('通信に失敗しました: ' + stat)
+            }
+        });
+    });
+
+    $(function() {
+        $('.list-group')
+    });
+
+    <!-- load_list(); -->
+})
+
+load_list = function() {
+
+    var STATUS = {
+            0: 'Stopped',
+            1: 'Running',
+            2: 'Resumed'
+    }
+
+    var STATUSCOLOR = {
+            0: 'badge-gray',
+            1: 'badge-green',
+            2: 'badge-yellow'
+    }
+
+    $.ajax({
+        dataType: 'json',
+        url: '{% url "ec2:getlist" %}',
+        success: function(data, dataType) {
+            $.each(data,  function(i,machine) {
+                $('.list-group').append('<li class="list-group-item">' +
+                        machine['name'] + '<span class="badge ' +
+                        STATUSCOLOR[machine['status']] + '">' +
+                        STATUS[machine['status']] + '</span></li>')
+            });
+        },
+        error: function(request, stat, err) {
+            alert('通信に失敗しました:' + stat)
+        }
+    });
+};
+
+clear_list = function() {
+    $('.list-group').empty();
+};
+
+reload_list = function() {
+    clear_list();
+    load_list();
+}
+
+</script>
+
+{% endblock %}

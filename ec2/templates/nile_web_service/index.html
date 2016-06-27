@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block signup %}
+<li><a href="#"
+       data-toggle="popover"
+       data-placement="bottom"
+       data-container="body"
+       data-content='<form method="POST" action="/accounts/signup/" autocomplete="off">
+                     {{singup}}
+                     <br>
+                     <input type="submit" id="signup" value="signup">
+                     </form>'
+       data-html="true">サインアップ</a></li>
+{% endblock %}
+{% block login %}
+<li><a href="#"
+       data-toggle="popover"
+       data-placement="bottom"
+       data-container="body"
+       data-content='<form method="POST" action="/accounts/login/">
+                    {{login}}
+                    <input type="submit" id="login" value="login">
+                    </form>'
+       data-html="true">ログイン</a></li>
+{% endblock %}
+{% block content %}
+{% load staticfiles %}
+<div class="contents">
+    <div class="public-banner container">
+        <div style="position:relative; width:100%; height:434px; background:rgba(255,255,255,0.5)"></div>
+        <!-- <img class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-0 col-md-4" src="{% static 'img/logo.png' %}"></img> -->
+        <div class="col-xs-12 col-sm-8 col-md-4" style="position:absolute; top:0">
+            <h1>NWS <small> Nile Web Service </small></h1>
+        </div>
+
+    <div class="col-xs-12">
+        <h1>Welcome Cloud Beginners!</h1>
+        <div class="well">
+            Hello
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
