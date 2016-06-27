@@ -37,6 +37,7 @@
 <ul class="list-group">
 {% for machine in machines %}
 <li class="list-group-item">{{machine.name}}
+    <button id="start-{{machine.machine_token}}">Start</button>
     <button id="destroy-{{machine.machine_token}}">Destroy</button>
     <a href="{% url 'ec2:launch' %}/../downloadkey-{{machine.machine_token}}">Download Key</a>
     <span>157.82.3.{{ machine.ip.address }}</span>
@@ -105,7 +106,7 @@ $(function() {
         $.ajax({
             dataType: 'json',
             data: $('#newInstanceForm').serialize(),
-            url: '{% url "ec2:launch" %}', 
+            url: '{% url "ec2:launch" %}',
             success: function(data, dataType) {
                 if (data['isvalid'] == true) {
                     $('#newInstanceModal').modal('hide');
@@ -121,10 +122,23 @@ $(function() {
         });
     });
 
+    $('[id^=start]').click(function(event) {
+        $.ajax({
+            dataType: 'text',
+            url: '{% url "ec2:start" %}/../' + this.id,
+            success: function(data, dataType) {
+                alert('start. please reload')
+            },
+            error: function(request, stat, err) {
+                alert('通信に失敗しました: ' + stat)
+            }
+        });
+    });
+
     $('[id^=destroy]').click(function(event) {
         $.ajax({
             dataType: 'text',
-            url: '{% url "ec2:launch" %}/../' + this.id, 
+            url: '{% url "ec2:launch" %}/../' + this.id,
             success: function(data, dataType) {
                 alert('destroyed. please reload')
             },

@@ -7,6 +7,7 @@ from .models import IP
 from django.contrib.auth.decorators import login_required
 from django import forms
 import json, uuid, os
+import libvirt
 
 class SignupForm(forms.Form):
     username = forms.CharField(required=True,label='Your name',max_length=30)
@@ -24,6 +25,7 @@ def machines_index(request):
     l_form = LoginForm()
     return render_to_response('ec2/machines/index.html', {'machines': machines,'singup': s_form,'login' : l_form} , context_instance=RequestContext(request))
 
+# VM新規作成
 def machines_launch(request):
     def validate(name,core,mem,token,ip):
         # TODO: invalidの理由を含める
@@ -69,8 +71,22 @@ def machines_launch(request):
             ))
     return HttpResponse(json.dumps(res))
 
+# VM 起動
+def machines_start(request, machine_token):
+    res = {}
+    if request.user.is_authenticated():
+        m = Machine.objects.get(machine_token=machine_token)
+        con = libvirt.open("qemu+tls://157.82.3.112/system")
+        dom = con.lookupByName(m.machine_token)
+        info = dom.info();
+        if info[0] != 1: #VIR_DOMAIN_RUNNING
+            dom.create()
+    return HttpResponse(json.dumps(res)
+
+# VM 削除
 def machines_destroy(request, machine_token):
     if request.user.is_authenticated():
+        # TODO: libvirtAPIからVMをundefine
         m = Machine.objects.get(machine_token=machine_token)
         ip = m.ip
         ip.is_used = False
@@ -83,7 +99,6 @@ def machines_downloadkey(request, machine_token):
     m = Machine.objects.get(machine_token=machine_token)
     private_key = '{0}_{1}'.format(request.user.username, m.name)
     response = HttpResponse(open('/tmp/{0}'.format(private_key),'rb').read(), content_type='text/plain')
-    # ユーザにDLさせる鍵は~.pemの形に
     response['Content-Type'] = 'application/force-download'
     response['Content-Disposition'] = 'filename={0}.pem'.format(private_key)
     os.system('rm /tmp/{0}'.format(private_key))
