@@ -81,7 +81,7 @@ def machines_start(request, machine_token):
         info = dom.info();
         if info[0] != 1: #VIR_DOMAIN_RUNNING
             dom.create()
-    return HttpResponse(json.dumps(res)
+    return HttpResponse(json.dumps(res))
 
 # VM 削除
 def machines_destroy(request, machine_token):
