@@ -33,10 +33,11 @@ def update_machines(user):
         m.core = info[3]
         m.memory = info[2]
         m.save()
+    return machines
 
 @login_required(login_url="/")
 def machines_index(request):
-    machines = Machine.objects.all()
+    machines = update_machines(request.user)
     s_form = SignupForm()
     l_form = LoginForm()
     return render_to_response('ec2/machines/index.html', {'machines': machines,'singup': s_form,'login' : l_form} , context_instance=RequestContext(request))
