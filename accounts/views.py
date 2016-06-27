@@ -16,6 +16,8 @@ class AccountCreateView(CreateView):
         return reverse('my:user_creation')
 
 def signup(request):
+    if request.user.is_authenticated():
+        return redirect('ec2:root')
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
@@ -35,6 +37,8 @@ def signup(request):
     return redirect('ec2:root')
 
 def log_in(request):
+    if request.user.is_authenticated():
+        return redirect('ec2:root')
     if request.method=="POST":
         form = LoginForm(request.POST)
         if form.is_valid():
