@@ -62,17 +62,21 @@ def machines_launch(request):
             os.system('ssh-keygen -b 4096 -t rsa -N "" -f /tmp/{0}'.format(ssh_key_name))
             os.system('scp /tmp/{0}.pub cloudA1-2:/tmp/{0}.pub'.format(ssh_key_name))
             os.system('rm /tmp/{0}.pub'.format(ssh_key_name))
-            os.system('ssh cloudA1-2 "sudo bash /home/nws/create.bash {vm_name} {pub_key} {ip}"'.format(
-                vm_name = machine_token,
-                pub_key = '/tmp/{0}.pub'.format(ssh_key_name),
-                ip = ip.address
-            ))
+            # os.system('ssh cloudA1-2 "sudo bash /home/nws/create.bash {vm_name} {pub_key} {ip}"'.format(
+            #     vm_name = machine_token,
+            #     pub_key = '/tmp/{0}.pub'.format(ssh_key_name),
+            #     ip = ip.address
+            # ))
     return HttpResponse(json.dumps(res))
 
 def machines_destroy(request, machine_token):
     if request.user.is_authenticated():
         m = Machine.objects.get(machine_token=machine_token)
+        ip = m.ip
+        ip.is_used = False
+        ip.save()
         m.delete()
+
     return HttpResponse('done')
 
 def machines_downloadkey(request, machine_token):
@@ -82,7 +86,6 @@ def machines_downloadkey(request, machine_token):
     # ユーザにDLさせる鍵は~.pemの形に
     response['Content-Type'] = 'application/force-download'
     response['Content-Disposition'] = 'filename={0}.pem'.format(private_key)
-    # 削除してしまったらDownloadできる？？
     os.system('rm /tmp/{0}'.format(private_key))
     return response
 
