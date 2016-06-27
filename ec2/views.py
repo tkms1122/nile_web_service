@@ -83,6 +83,22 @@ def machines_start(request, machine_token):
         info = dom.info();
         if info[0] != 1: #VIR_DOMAIN_RUNNING
             dom.create()
+	m.status = 1
+	m.save()
+    return HttpResponse(json.dumps(res))
+
+# VM 終了
+def machines_stop(request, machine_token):
+    res = {}
+    if request.user.is_authenticated():
+        m = Machine.objects.get(machine_token=machine_token)
+        con = libvirt.open("qemu+tls://157.82.3.112/system")
+        dom = con.lookupByName(m.machine_token)
+        info = dom.info();
+        if info[0] != 5: #VIR_DOMAIN_SHUTOFF
+            dom.destroy()
+	m.status = 0
+	m.save()
     return HttpResponse(json.dumps(res))
 
 # VM 削除

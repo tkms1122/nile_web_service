@@ -38,6 +38,7 @@
 {% for machine in machines %}
 <li class="list-group-item">{{machine.name}}
     <button id="start-{{machine.machine_token}}">Start</button>
+    <button id="stop-{{machine.machine_token}}">Stop</button>
     <button id="destroy-{{machine.machine_token}}">Destroy</button>
     <a href="{% url 'ec2:launch' %}/../downloadkey-{{machine.machine_token}}">Download Key</a>
     <span>157.82.3.{{ machine.ip.address }}</span>
@@ -127,7 +128,20 @@ $(function() {
             dataType: 'text',
             url: '/ec2/machines/' + this.id,
             success: function(data, dataType) {
-                alert('start. please reload')
+                alert('started. please reload')
+            },
+            error: function(request, stat, err) {
+                alert('通信に失敗しました: ' + stat)
+            }
+        });
+    });
+
+    $('[id^=stop]').click(function(event) {
+        $.ajax({
+            dataType: 'text',
+            url: '/ec2/machines/' + this.id,
+            success: function(data, dataType) {
+                alert('stopped. please reload')
             },
             error: function(request, stat, err) {
                 alert('通信に失敗しました: ' + stat)
@@ -138,7 +152,7 @@ $(function() {
     $('[id^=destroy]').click(function(event) {
         $.ajax({
             dataType: 'text',
-            url: '{% url "ec2:launch" %}/../' + this.id,
+            url: '/ec2/machines/' + this.id,
             success: function(data, dataType) {
                 alert('destroyed. please reload')
             },
