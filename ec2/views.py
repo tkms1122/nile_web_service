@@ -20,6 +20,20 @@ class LoginForm(forms.Form):
     username = forms.CharField(required=True)
     password = forms.CharField(required=True,widget=forms.PasswordInput(), min_length=4)
 
+# ハイパーバイザーと通信して、指定ユーザーのVMの状態を更新
+def update_machines(user):
+    machines = Machine.objects.filter(auth_user=user)
+    tokens = map(lambda m: m.machine_token, machines)
+    con = libvirt.open("qemu+tls://157.82.3.112/system")
+    doms = filter(lambda d: d.name() in tokens, con.listAllDomains())
+    infos = {token: info for token, info in map(lambda d: (d.name(), d.info()), doms)}
+    for m in machines:
+        info = infos[m.machine_token]
+        m.status = Machine.DOMSTAT2STATUS[info[0]]
+        m.core = info[3]
+        m.memory = info[2]
+        m.save()
+
 @login_required(login_url="/")
 def machines_index(request):
     machines = Machine.objects.all()
