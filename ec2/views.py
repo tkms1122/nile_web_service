@@ -62,11 +62,11 @@ def machines_launch(request):
             os.system('ssh-keygen -b 4096 -t rsa -N "" -f /tmp/{0}'.format(ssh_key_name))
             os.system('scp /tmp/{0}.pub cloudA1-2:/tmp/{0}.pub'.format(ssh_key_name))
             os.system('rm /tmp/{0}.pub'.format(ssh_key_name))
-            # os.system('ssh cloudA1-2 "sudo bash /home/nws/create.bash {vm_name} {pub_key} {ip}"'.format(
-            #     vm_name = machine_token,
-            #     pub_key = '/tmp/{0}.pub'.format(ssh_key_name),
-            #     ip = ip.address
-            # ))
+            os.system('ssh cloudA1-2 "sudo bash /home/nws/create.bash {vm_name} {pub_key} {ip}"'.format(
+                vm_name = machine_token,
+                pub_key = '/tmp/{0}.pub'.format(ssh_key_name),
+                ip = ip.address
+            ))
     return HttpResponse(json.dumps(res))
 
 def machines_destroy(request, machine_token):
