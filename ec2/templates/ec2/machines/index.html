@@ -125,7 +125,7 @@ $(function() {
     $('[id^=start]').click(function(event) {
         $.ajax({
             dataType: 'text',
-            url: '{% url "ec2:start" %}/../' + this.id,
+            url: '/ec2/machines/' + this.id,
             success: function(data, dataType) {
                 alert('start. please reload')
             },

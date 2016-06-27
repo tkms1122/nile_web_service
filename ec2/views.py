@@ -1,3 +1,5 @@
+# coding: UTF-8
+
 from django.shortcuts import render, render_to_response, redirect
 from django.template import RequestContext
 from django.http import HttpResponse
