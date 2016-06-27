@@ -107,9 +107,8 @@ $(function() {
             success: function(data, dataType) {
                 if (data['isvalid'] == true) {
                     $('#newInstanceModal').modal('hide');
-                    $('.list-group').append('<li class="list-group-item">' +
-                            data['name'] + '<span class="badge ' + data['statcolor'] + '">' +
-                            data['stat'] + '</span></li>')
+                    $('#newInstanceForm')[0].reset();
+                    reload_list();
                 } else {
                     alert('something is wrong')
                 }
@@ -132,7 +131,53 @@ $(function() {
             }
         });
     });
+
+    $(function() {
+        $('.list-group')
+    });
+
+    <!-- load_list(); -->
 })
+
+load_list = function() {
+
+    var STATUS = {
+            0: 'Stopped',
+            1: 'Running',
+            2: 'Resumed'
+    }
+
+    var STATUSCOLOR = {
+            0: 'badge-gray',
+            1: 'badge-green',
+            2: 'badge-yellow'
+    }
+
+    $.ajax({
+        dataType: 'json',
+        url: '{% url "ec2:getlist" %}',
+        success: function(data, dataType) {
+            $.each(data,  function(i,machine) {
+                $('.list-group').append('<li class="list-group-item">' +
+                        machine['name'] + '<span class="badge ' +
+                        STATUSCOLOR[machine['status']] + '">' +
+                        STATUS[machine['status']] + '</span></li>')
+            });
+        },
+        error: function(request, stat, err) {
+            alert('通信に失敗しました:' + stat)
+        }
+    });
+};
+
+clear_list = function() {
+    $('.list-group').empty();
+};
+
+reload_list = function() {
+    clear_list();
+    load_list();
+}
 
 </script>
 

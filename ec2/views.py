@@ -82,5 +82,24 @@ def machines_downloadkey(request, machine_token):
     # ユーザにDLさせる鍵は~.pemの形に
     response['Content-Type'] = 'application/force-download'
     response['Content-Disposition'] = 'filename={0}.pem'.format(private_key)
+    # 削除してしまったらDownloadできる？？
     os.system('rm /tmp/{0}'.format(private_key))
     return response
+
+def machines_getlist(request):
+    res = {}
+    if request.user.is_authenticated():
+        machines = Machine.objects.all()
+        machines = filter(lambda m: m.auth_user.username == request.user.username, machines)
+        for idx, m in enumerate(machines):
+            instance = {
+                    'username': m.auth_user.username,
+                    'machine_token': m.machine_token,
+                    'name': m.name,
+                    'core': m.core,
+                    'memory': m.memory,
+                    'status': m.status
+            }
+            res[idx] = instance
+        return HttpResponse(json.dumps(res))
+    return HttpResponse(json.dumps(res))
