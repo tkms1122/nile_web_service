@@ -4,7 +4,7 @@ from django.views.generic import CreateView
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from ec2.views import SignupForm, LoginForm
+from ec2.views import UserForm, LoginForm
 from django.core.urlresolvers import reverse
 
 class AccountCreateView(CreateView):
@@ -21,32 +21,40 @@ def signup(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = SignupForm(request.POST)
+        s_form = UserForm(request.POST)
         # check whether it's valid:
-        if form.is_valid():
+        if s_form.is_valid():
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
-            user_name=form.cleaned_data['username']
-            password=form.cleaned_data['password']
+            user_name=s_form.cleaned_data['username']
+            password=s_form.cleaned_data['password']
             user = User.objects.create_user(username=user_name, password=password)
             user.save()
             return redirect('ec2:root')
-
+        else:
+            l_form = LoginForm()
+    else:
+        s_form = UserForm()
+        l_form = LoginForm()
     # if a GET (or any other method) we'll create a blank form
-    return redirect('ec2:root')
+    return render_to_response('nile_web_service/index.html', {'singup': s_form,'login' : l_form}, context_instance=RequestContext(request))
 
 def log_in(request):
     if request.user.is_authenticated():
         return redirect('ec2:root')
     if request.method=="POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
+        l_form = LoginForm(request.POST)
+        if l_form.is_valid():
+            username = l_form.cleaned_data['username']
+            password = l_form.cleaned_data['password']
             user = authenticate(username=username, password=password)
             if user is not None:
                 if user.is_active:
                     login(request, user)
-    return redirect('ec2:root')
+                    return redirect('ec2:root')
+    else:
+        l_form = LoginForm()
+    s_form = UserForm()
+    return render_to_response('nile_web_service/index.html', {'singup': s_form,'login' : l_form}, context_instance=RequestContext(request))
 

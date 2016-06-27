@@ -3,7 +3,7 @@ from django.template import RequestContext
 from django.http import HttpResponse
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
-from ec2.views import SignupForm, LoginForm
+from ec2.views import LoginForm,UserForm
 
 def welcome(request):
     if request.user.is_authenticated():

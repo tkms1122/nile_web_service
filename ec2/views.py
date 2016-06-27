@@ -5,22 +5,60 @@ from django.core.context_processors import csrf
 from .models import Machine
 from .models import IP
 from django.contrib.auth.decorators import login_required
+from django.forms import ModelForm
+from django.contrib.auth.models import User
 from django import forms
 import json, uuid, os
+from django.contrib.auth.hashers import check_password
 
-class SignupForm(forms.Form):
-    username = forms.CharField(required=True,label='Your name',max_length=30)
-    password = forms.CharField(widget=forms.PasswordInput(), min_length=4)
+
+class UserForm(ModelForm):
+    confirm  = forms.CharField(widget=forms.PasswordInput(),label='password(確認) ', min_length=4)
+    password = forms.CharField(widget=forms.PasswordInput(),min_length=4)
+    class Meta:
+        model = User
+        fields = ['username','password']
+    def clean(self):
+        cleaned_data = super(UserForm, self).clean()
+        password = cleaned_data.get("password")
+        confirm = cleaned_data.get("confirm")
+
+        if password != confirm:
+            msg = "mismatch"
+            self.add_error('confirm',msg)
 
 
 class LoginForm(forms.Form):
     username = forms.CharField(required=True)
     password = forms.CharField(required=True,widget=forms.PasswordInput(), min_length=4)
 
+    def clean_username(self):
+        data = self.cleaned_data['username']
+        flag = True
+        for e in User.objects.all():
+            if e.username == data:
+                flag = False
+        if flag:
+            raise forms.ValidationError('unexisting username')
+        return data
+
+    def clean(self):
+        cleaned_data = super(LoginForm, self).clean()
+        username = cleaned_data.get("username")
+        password = cleaned_data.get("password")
+        for e in User.objects.all():
+            if e.username == username:
+                if check_password(password,e.password) is False:
+                        msg = "incorrect password"
+                        self.add_error('password',msg)
+
+
+
+
 @login_required(login_url="/")
 def machines_index(request):
     machines = Machine.objects.all()
-    s_form = SignupForm()
+    s_form = UserForm()
     l_form = LoginForm()
     return render_to_response('ec2/machines/index.html', {'machines': machines,'singup': s_form,'login' : l_form} , context_instance=RequestContext(request))
 
