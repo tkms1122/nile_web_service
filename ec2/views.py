@@ -104,7 +104,7 @@ def machines_launch(request):
         res['isvalid'] = isvalid
         if isvalid:
             #　machineテーブルに追加
-            m = Machine(auth_user=request.user, ip=ip, machine_token=machine_token, name=machine_name, core=cpu_core, memory=memory_size, status=0)
+            m = Machine(auth_user=request.user, ip=ip, machine_token=machine_token, name=machine_name, core=cpu_core, memory=memory_size, status=1)
             res.update(__Machine_to_dict__(m));
             m.save()
             ip.is_used = True
