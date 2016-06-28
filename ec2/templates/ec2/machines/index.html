@@ -50,18 +50,6 @@
     </table>
 </div>
 
-<!--<ul class="list-group">-->
-<!--{% for machine in machines %}-->
-<!--<li class="list-group-item">{{machine.name}}-->
-    <!--<button id="start-{{machine.machine_token}}">Start</button>-->
-    <!--<button id="stop-{{machine.machine_token}}">Stop</button>-->
-    <!--<button id="destroy-{{machine.machine_token}}">Destroy</button>-->
-    <!--<a href="{% url 'ec2:launch' %}/../downloadkey-{{machine.machine_token}}">Download Key</a>-->
-    <!--<span>157.82.3.{{ machine.ip.address }}</span>-->
-    <!--<span class="badge {{machine.getstatecolor}}">{{machine.getstate}}</span>-->
-<!--</li>-->
-<!--{% endfor %}-->
-<!--</ul>-->
 </div>
 
 <!-- modal -->
@@ -297,7 +285,7 @@ machine_info_row_children = function(machine) {
     var li = $('<li></li>');
     var dlkey = "{% url 'ec2:downloadkey' '0' %}";
     dlkey = dlkey.substring(0, dlkey.length - 2) + token;
-    var dlkey_link = $('<a href="' + dlkey +'">Download Key</a>');
+    var dlkey_link = $('<a href="' + dlkey +'" download>Download Key</a>');
     li.append(dlkey_link);
     ul.append(li);
 
