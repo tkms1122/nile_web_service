@@ -13,6 +13,7 @@ urlpatterns = patterns('',
                        url(r'^machines/start-(?P<machine_token>.+)/$', views.machines_start, name='start'),
                        url(r'^machines/stop-(?P<machine_token>.+)/$', views.machines_stop, name='stop'),
                        url(r'^machines/list$', views.machines_getlist, name='getlist'),
+                       url(r'^machines/getinfo-(?P<machine_token>.+)/$', views.machines_getinfo, name='getinfo'),
                        # url(r'^machines/(\d+)$', views.machines_show),
                        # url(r'^machines/new$', views.machines_new),
                        # url(r'^machines/destroy$', views.machines_destroy), POST

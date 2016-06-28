@@ -13,6 +13,7 @@ from django import forms
 import json, uuid, os
 from django.contrib.auth.hashers import check_password
 import libvirt
+import time
 
 
 class UserForm(ModelForm):
@@ -203,6 +204,7 @@ def machines_getinfo(request, machine_token):
     res = {}
     if request.user.is_authenticated():
         machine = Machine.objects.get(machine_token=machine_token)
-        if not machine.autu_user.username == request.user.username:
+        if not machine.auth_user.username == request.user.username:
             return HttpResponse(json.dumps(res))
+        res.update(__Machine_to_dict__(machine))
     return HttpResponse(json.dumps(res))
