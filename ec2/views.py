@@ -166,20 +166,6 @@ def machines_destroy(request, machine_token):
 
     return HttpResponse('done')
 
-def machines_start(request, machine_token):
-    if request.user.is_authenticated():
-        m = Machine.objects.get(machine_token=machine_token)
-        m.status = 1
-        m.save()
-    return HttpResponse('done')
-
-def machines_stop(request, machine_token):
-    if request.user.is_authenticated():
-        m = Machine.objects.get(machine_token=machine_token)
-        m.status = 0
-        m.save()
-    return HttpResponse('done')
-
 def machines_downloadkey(request, machine_token):
     m = Machine.objects.get(machine_token=machine_token)
     private_key = '{0}_{1}'.format(request.user.username, m.name)
