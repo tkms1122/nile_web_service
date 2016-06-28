@@ -113,11 +113,12 @@ $(function() {
         $.ajax({
             dataType: 'json',
             data: $('#newInstanceForm').serialize(),
-            url: '{% url "ec2:launch" %}', 
+            url: '{% url "ec2:launch" %}',
             success: function(data, dataType) {
                 remove_launching();
                 if (data['isvalid'] == true) {
                     $('#newInstanceForm')[0].reset();
+                    register_token(data['machine_token']);
                     $('#instanceTable').append(machine_info_to_row(data));
                 } else {
                     alert('something is wrong')
@@ -129,30 +130,60 @@ $(function() {
         });
     });
 
-    $('[id^=destroy]').click(function(event) {
-        $.ajax({
-            dataType: 'text',
-            url: '{% url "ec2:launch" %}/../' + this.id, 
-            success: function(data, dataType) {
-                alert('destroyed. please reload')
-            },
-            error: function(request, stat, err) {
-                alert('通信に失敗しました: ' + stat)
-            }
-        });
-    });
-
-    $(function() {
-        $('.list-group')
-    });
-
     first_draw();
 })
 
 <!-- インスタンス一覧の取得・表示 -->
 var MACHINE_TOKENS = [];
+register_token = function(token) {
+    if (MACHINE_TOKENS.indexOf(token) < 0)
+        MACHINE_TOKENS.push(token);
+}
+
+remove_token = function(token) {
+    var idx = MACHINE_TOKENS.indexOf(token);
+    if (idx >= 0)
+        MACHINE_TOKENS.splice(idx,1);
+}
+
+replace_token = function(template, token) {
+    return template.substring(0, template.length - 2) + token;
+}
+
+remove_children = function(node) {
+    var childs = node.children;
+    while (childs.length > 0)
+        node.removeChild(childs[0]);
+}
+
+show_waiting = function(token) {
+    var tr = $('[machine-token="' + token + '"]');
+    remove_children(tr[0]);
+    tr.append('<th><img src="{% static "img/loading.gif" %}" style="height: 18px"/></th>');
+    tr.append('<th></th>');
+    tr.append('<th></th>');
+    tr.append('<th></th>');
+    tr.append('<th></th>');
+}
+
+remove_tr = function(token) {
+    $('[machine-token="' + token + '"]').remove();
+}
+
+append_all = function(node, list) {
+    for (var i = 0; i < list.length; i++)
+        node.append(list[i]);
+}
 
 machine_info_to_row = function(machine) {
+    var token = machine['machine_token'];
+    var tr = $('<tr machine-token="' + token + '"></tr>');
+    var children = machine_info_row_children(machine);
+    append_all(tr,children);
+    return tr;
+}
+
+machine_info_row_children = function(machine) {
     var STATUS = {
             0: 'Stopped',
             1: 'Running',
@@ -163,41 +194,91 @@ machine_info_to_row = function(machine) {
             1: 'badge-green',
             2: 'badge-yellow'
     }
-    var tr = $('<tr></tr>');
-    tr.append('<th>' + machine['name'] + '</th>');
-    tr.append('<th>' + machine['core'] + '</th>');
-    tr.append('<th>' + machine['memory'] + '</th>');
-    tr.append('<th> 157.82.3.' + machine['ip_addr'] + '</th>')
-
-    <!-- machine state and control dropdown menu -->
     var token = machine['machine_token'];
+    var children = [];
+    children.push('<th>' + machine['name'] + '</th>');
+    children.push('<th>' + machine['core'] + '</th>');
+    children.push('<th>' + machine['memory'] + '</th>');
+    children.push('<th> 157.82.3.' + machine['ip_addr'] + '</th>')
+
+    <!--------------------------------------------->
+    <!-- machine state and control dropdown menu -->
+    <!--------------------------------------------->
     th=$('<th></th>')
     dropdown = $('<div class="dropdown" style="display: table-cell; vertical-align: middle;"></div>')
     dropdown.append('<a data-toggle="dropdown" data-target="#" href="#"><span class="badge ' + STATUSCOLOR[machine['status']] + '">' +
             STATUS[machine['status']] + '<span class="caret"></span></span></a>');
     var ul = $('<ul class="dropdown-menu"></ul>');
 
+    <!-- dropdown menu: start -->
     var li = $('<li></li>');
-    var start = "{% url 'ec2:start' '0' %}";
-    start = start.substring(0, start.length - 2) + token;
-    var start_link = $('<a href="' + start +'">Start</a>');
+    var start_link = $('<a href="#">Start</a>');
+    li.click(function(event) {
+        show_waiting(token);
+        $.ajax({
+            dataType: 'text',
+            url: replace_token('{% url "ec2:start" "0" %}', token),
+            success: function(data, dataType) {
+                $.getJSON(replace_token('{% url "ec2:getinfo" "0" %}', token), {}, function(data) {
+                    var tr = $('[machine-token="' + token + '"]');
+                    remove_children(tr[0]);
+                    append_all(tr,machine_info_row_children(data));
+                })
+            },
+            error: function(request, stat, err) {
+                alert('通信に失敗しました:' + stat)
+            }
+        });
+    });
     li.append(start_link);
     ul.append(li);
 
+    <!-- dropdown menu: stop -->
     var li = $('<li></li>');
-    var stop = "{% url 'ec2:stop' '0' %}";
-    stop = stop.substring(0, stop.length - 2) + token;
-    var stop_link = $('<a href="' + stop +'">Stop</a>');
+    var stop_link = $('<a href="#">Stop</a>');
+    li.click(function(event) {
+        show_waiting(token);
+        $.ajax({
+            dataType: 'text',
+            url: replace_token('{% url "ec2:stop" "0" %}', token),
+            success: function(data, dataType) {
+                $.getJSON(replace_token('{% url "ec2:getinfo" "0" %}', token), {}, function(data) {
+                    var tr = $('[machine-token="' + token + '"]');
+                    remove_children(tr[0]);
+                    append_all(tr,machine_info_row_children(data));
+                })
+            },
+            error: function(request, stat, err) {
+                alert('通信に失敗しました:' + stat)
+            }
+        });
+    });
     li.append(stop_link);
     ul.append(li);
 
+    <!-- dropdown menu: destroy -->
     var li = $('<li></li>');
     var destroy = "{% url 'ec2:destroy' '0' %}";
     destroy = destroy.substring(0, destroy.length - 2) + token;
-    var destroy_link = $('<a href="' + destroy +'">Destroy</a>');
+    var destroy_link = $('<a href="' + '#' +'">Destroy</a>');
+    li.click(function(event) {
+        show_waiting(token);
+        $.ajax({
+            dataType: 'text',
+            url: replace_token('{% url "ec2:destroy" "0" %}', token),
+            success: function(data, dataType) {
+                remove_tr(token);
+                remove_token(token);
+            },
+            error: function(request, stat, err) {
+                alert('通信に失敗しました:' + stat)
+            }
+        });
+    });
     li.append(destroy_link);
     ul.append(li);
 
+    <!-- dropdown menu: download key -->
     var li = $('<li></li>');
     var dlkey = "{% url 'ec2:downloadkey' '0' %}";
     dlkey = dlkey.substring(0, dlkey.length - 2) + token;
@@ -207,8 +288,8 @@ machine_info_to_row = function(machine) {
 
     dropdown.append(ul);
     th.append(dropdown);
-    tr.append(th);
-    return tr;
+    children.push(th);
+    return children;
 }
 
 first_draw = function() {
@@ -237,7 +318,7 @@ clear_list = function() {
 
 display_launching = function() {
     var tr = $('<tr id="loading"></tr>');
-    tr.append('<th><img src="{% static "img/loading.gif" %}" style="height: 25px"/></th>');
+    tr.append('<th><img src="{% static "img/loading.gif" %}" style="height: 18px"/></th>');
     tr.append('<th></th>');
     tr.append('<th></th>');
     tr.append('<th></th>');
