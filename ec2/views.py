@@ -49,10 +49,7 @@ def machines_launch(request):
         if isvalid:
             #　machineテーブルに追加
             m = Machine(auth_user=request.user, ip=ip, machine_token=machine_token, name=machine_name, core=cpu_core, memory=memory_size, status=0)
-            res['name'] = machine_name
-            res['core'] = cpu_core
-            res['stat'] = m.getstate()
-            res['statcolor'] = m.getstatecolor()
+            res.update(__Machine_to_dict__(m));
             m.save()
             ip.is_used = True
             ip.save()
@@ -79,6 +76,20 @@ def machines_destroy(request, machine_token):
 
     return HttpResponse('done')
 
+def machines_start(request, machine_token):
+    if request.user.is_authenticated():
+        m = Machine.objects.get(machine_token=machine_token)
+        m.status = 1
+        m.save()
+    return HttpResponse('done')
+
+def machines_stop(request, machine_token):
+    if request.user.is_authenticated():
+        m = Machine.objects.get(machine_token=machine_token)
+        m.status = 0
+        m.save()
+    return HttpResponse('done')
+
 def machines_downloadkey(request, machine_token):
     m = Machine.objects.get(machine_token=machine_token)
     private_key = '{0}_{1}'.format(request.user.username, m.name)
@@ -89,20 +100,34 @@ def machines_downloadkey(request, machine_token):
     os.system('rm /tmp/{0}'.format(private_key))
     return response
 
+def __Machine_to_dict__(m):
+    return {
+            'username': m.auth_user.username,
+            'machine_token': str(m.machine_token),
+            'name': m.name,
+            'core': m.core,
+            'memory': m.memory,
+            'status': m.status,
+            'ip_addr': m.ip.address
+    }
+
 def machines_getlist(request):
+    ''' a user's all machine info is packed in a JSON object. '''
     res = {}
     if request.user.is_authenticated():
         machines = Machine.objects.all()
         machines = filter(lambda m: m.auth_user.username == request.user.username, machines)
-        for idx, m in enumerate(machines):
-            instance = {
-                    'username': m.auth_user.username,
-                    'machine_token': m.machine_token,
-                    'name': m.name,
-                    'core': m.core,
-                    'memory': m.memory,
-                    'status': m.status
-            }
-            res[idx] = instance
+        for idx, machine in enumerate(machines):
+            _dict = __Machine_to_dict__(machine)
+            res[idx] = _dict
         return HttpResponse(json.dumps(res))
+    return HttpResponse(json.dumps(res))
+
+def machines_getinfo(request, machine_token):
+    ''' pick one machine info by specifying token. '''
+    res = {}
+    if request.user.is_authenticated():
+        machine = Machine.objects.get(machine_token=machine_token)
+        if not machine.autu_user.username == request.user.username:
+            return HttpResponse(json.dumps(res))
     return HttpResponse(json.dumps(res))

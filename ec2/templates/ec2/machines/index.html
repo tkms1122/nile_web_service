@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% block signup %}
 <li><a href="#"
        data-toggle="popover"
@@ -26,24 +27,29 @@
 
 <div class="container">
 
-<div class="row row-center va-bottom">
-    <div class="col-xs-10">
-        <h1 id="headerone">Instance List</h1>
-    </div><div class="col-xs-1" >
-        <button class="btn btn-primary" data-toggle="modal" data-target="#newInstanceModal">New Instance</a>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="hidden-xs col-sm-9 col-md-10"><h4>Instance List</h4></div>
+        <div class="col-xs-12 visible-xs"><center><h2>Instance List</h4><center></div>
+        <div class="col-xs-12 col-sm-3 col-md-2"><center><button class="btn btn-primary" data-toggle="modal" data-target="#newInstanceModal">New Instance</button></center></div>
+        <div class="clearfix"></div>
     </div>
+    <table id="instanceList" class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>CPU (core)</th>
+                <th>Memory</th>
+                <th>IP address</th>
+                <th>status/control</th>
+            </tr>
+        </thead>
+        <tbody id='instanceTable'>
+        </tbody>
+    </table>
 </div>
 
-<ul class="list-group">
-{% for machine in machines %}
-<li class="list-group-item">{{machine.name}}
-    <button id="destroy-{{machine.machine_token}}">Destroy</button>
-    <a href="{% url 'ec2:launch' %}/../downloadkey-{{machine.machine_token}}">Download Key</a>
-    <span>157.82.3.{{ machine.ip.address }}</span>
-    <span class="badge {{machine.getstatecolor}}">{{machine.getstate}}</span>
-</li>
-{% endfor %}
-</ul>
 </div>
 
 <!-- modal -->
@@ -102,15 +108,17 @@ $("#newInstanceModal").modal(options);
 $(function() {
     $('#newInstanceForm').submit(function(event) {
         event.preventDefault();
+        $('#newInstanceModal').modal('hide');
+        display_launching();
         $.ajax({
             dataType: 'json',
             data: $('#newInstanceForm').serialize(),
             url: '{% url "ec2:launch" %}', 
             success: function(data, dataType) {
+                remove_launching();
                 if (data['isvalid'] == true) {
-                    $('#newInstanceModal').modal('hide');
                     $('#newInstanceForm')[0].reset();
-                    reload_list();
+                    $('#instanceTable').append(machine_info_to_row(data));
                 } else {
                     alert('something is wrong')
                 }
@@ -138,33 +146,84 @@ $(function() {
         $('.list-group')
     });
 
-    <!-- load_list(); -->
+    first_draw();
 })
 
-load_list = function() {
+<!-- インスタンス一覧の取得・表示 -->
+var MACHINE_TOKENS = [];
 
+machine_info_to_row = function(machine) {
     var STATUS = {
             0: 'Stopped',
             1: 'Running',
             2: 'Resumed'
     }
-
     var STATUSCOLOR = {
             0: 'badge-gray',
             1: 'badge-green',
             2: 'badge-yellow'
     }
+    var tr = $('<tr></tr>');
+    tr.append('<th>' + machine['name'] + '</th>');
+    tr.append('<th>' + machine['core'] + '</th>');
+    tr.append('<th>' + machine['memory'] + '</th>');
+    tr.append('<th>' + machine['ip_addr'] + '</th>')
 
+    <!-- machine state and control dropdown menu -->
+    var token = machine['machine_token'];
+    th=$('<th></th>')
+    dropdown = $('<div class="dropdown" style="display: table-cell; vertical-align: middle;"></div>')
+    dropdown.append('<a data-toggle="dropdown" data-target="#" href="#"><span class="badge ' + STATUSCOLOR[machine['status']] + '">' +
+            STATUS[machine['status']] + '<span class="caret"></span></span></a>');
+    var ul = $('<ul class="dropdown-menu"></ul>');
+
+    var li = $('<li></li>');
+    var start = "{% url 'ec2:start' '0' %}";
+    start = start.substring(0, start.length - 2) + token;
+    var start_link = $('<a href="' + start +'">Start</a>');
+    li.append(start_link);
+    ul.append(li);
+
+    var li = $('<li></li>');
+    var stop = "{% url 'ec2:stop' '0' %}";
+    stop = stop.substring(0, stop.length - 2) + token;
+    var stop_link = $('<a href="' + stop +'">Stop</a>');
+    li.append(stop_link);
+    ul.append(li);
+
+    var li = $('<li></li>');
+    var destroy = "{% url 'ec2:destroy' '0' %}";
+    destroy = destroy.substring(0, destroy.length - 2) + token;
+    var destroy_link = $('<a href="' + destroy +'">Destroy</a>');
+    li.append(destroy_link);
+    ul.append(li);
+
+    var li = $('<li></li>');
+    var dlkey = "{% url 'ec2:downloadkey' '0' %}";
+    dlkey = dlkey.substring(0, dlkey.length - 2) + token;
+    var dlkey_link = $('<a href="' + dlkey +'">Download Key</a>');
+    li.append(dlkey_link);
+    ul.append(li);
+
+    dropdown.append(ul);
+    th.append(dropdown);
+    tr.append(th);
+    return tr;
+}
+
+first_draw = function() {
+    <!-- JSONを取得してDOMを生成 -->
     $.ajax({
         dataType: 'json',
         url: '{% url "ec2:getlist" %}',
         success: function(data, dataType) {
-            $.each(data,  function(i,machine) {
-                $('.list-group').append('<li class="list-group-item">' +
-                        machine['name'] + '<span class="badge ' +
-                        STATUSCOLOR[machine['status']] + '">' +
-                        STATUS[machine['status']] + '</span></li>')
-            });
+            if (Object.keys(data).length == 0) {
+            } else {
+                $.each(data,  function(i,machine) {
+                    MACHINE_TOKENS=MACHINE_TOKENS.concat([machine['machine_token']])
+                    $('#instanceTable').append(machine_info_to_row(machine));
+                });
+            }
         },
         error: function(request, stat, err) {
             alert('通信に失敗しました:' + stat)
@@ -176,10 +235,19 @@ clear_list = function() {
     $('.list-group').empty();
 };
 
-reload_list = function() {
-    clear_list();
-    load_list();
-}
+display_launching = function() {
+    var tr = $('<tr id="loading"></tr>');
+    tr.append('<th><img src="{% static "img/loading.gif" %}" style="height: 25px"/></th>');
+    tr.append('<th></th>');
+    tr.append('<th></th>');
+    tr.append('<th></th>');
+    tr.append('<th></th>');
+    $('#instanceTable').append(tr);
+};
+
+remove_launching = function() {
+    $('#loading').remove();
+};
 
 </script>
 

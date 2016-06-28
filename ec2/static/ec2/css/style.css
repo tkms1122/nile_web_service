@@ -44,7 +44,7 @@
     vertical-align:middle;
 }
 
-.row-center.va-bottom > [class*='col-'] {
+.va-bottom {
     display: inline-block;
     float: none;
     vertical-align:bottom;
