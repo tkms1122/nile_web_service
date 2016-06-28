@@ -285,7 +285,7 @@ machine_info_row_children = function(machine) {
     var li = $('<li></li>');
     var dlkey = "{% url 'ec2:downloadkey' '0' %}";
     dlkey = dlkey.substring(0, dlkey.length - 2) + token;
-    var dlkey_link = $('<a href="' + dlkey +'">Download Key</a>');
+    var dlkey_link = $('<a href="' + dlkey +'" download>Download Key</a>');
     li.append(dlkey_link);
     ul.append(li);
 
