@@ -30,6 +30,11 @@ class Machine(models.Model):
             2: 'badge-yellow'
     }
 
+    DOMSTAT2STATUS = {
+        1: 1, #VIR_DOMAIN_RUNNING
+        5: 0, #VIR_DOMAIN_SHUTOFF
+    }
+
     def __str__(self):
         return "machine"
 

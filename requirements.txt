@@ -13,3 +13,4 @@ six==1.10.0
 tornado==4.3
 tornado-systemd==1.0.1
 uWSGI==2.0.13.1
+libvirt-python

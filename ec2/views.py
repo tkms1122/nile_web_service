@@ -1,3 +1,5 @@
+# coding: UTF-8
+
 from django.shortcuts import render, render_to_response, redirect
 from django.template import RequestContext
 from django.http import HttpResponse
@@ -10,6 +12,7 @@ from django.contrib.auth.models import User
 from django import forms
 import json, uuid, os
 from django.contrib.auth.hashers import check_password
+import libvirt
 
 
 class UserForm(ModelForm):
@@ -31,7 +34,6 @@ class UserForm(ModelForm):
 class LoginForm(forms.Form):
     username = forms.CharField(required=True)
     password = forms.CharField(required=True,widget=forms.PasswordInput(), min_length=4)
-
     def clean_username(self):
         data = self.cleaned_data['username']
         flag = True
@@ -54,6 +56,20 @@ class LoginForm(forms.Form):
 
 
 
+# ハイパーバイザーと通信して、指定ユーザーのVMの状態を更新
+def update_machines(user):
+    machines = Machine.objects.filter(auth_user=user)
+    tokens = map(lambda m: m.machine_token, machines)
+    con = libvirt.open("qemu+tls://157.82.3.112/system")
+    doms = filter(lambda d: d.name() in tokens, con.listAllDomains())
+    infos = {token: info for token, info in map(lambda d: (d.name(), d.info()), doms)}
+    for m in machines:
+        info = infos[m.machine_token]
+        m.status = Machine.DOMSTAT2STATUS[info[0]]
+        m.core = info[3]
+        m.memory = info[2]
+        m.save()
+    return machines
 
 @login_required(login_url="/")
 def machines_index(request):
@@ -62,6 +78,7 @@ def machines_index(request):
     l_form = LoginForm()
     return render_to_response('ec2/machines/index.html', {'machines': machines,'singup': s_form,'login' : l_form} , context_instance=RequestContext(request))
 
+# VM新規作成
 def machines_launch(request):
     def validate(name,core,mem,token,ip):
         # TODO: invalidの理由を含める
@@ -95,18 +112,53 @@ def machines_launch(request):
             # 鍵生成&VM立ち上げ
             ssh_key_name = '{0}_{1}'.format(request.user.username, machine_name)
             os.system('ssh-keygen -b 4096 -t rsa -N "" -f /tmp/{0}'.format(ssh_key_name))
-            os.system('scp /tmp/{0}.pub cloudA1-2:/tmp/{0}.pub'.format(ssh_key_name))
+            os.system('scp -i /home/nws/.ssh/id_rsa /tmp/{0}.pub nws@157.82.3.112:/tmp/{0}.pub'.format(ssh_key_name))
             os.system('rm /tmp/{0}.pub'.format(ssh_key_name))
-            os.system('ssh cloudA1-2 "sudo bash /home/nws/create.bash {vm_name} {pub_key} {ip}"'.format(
+            os.system('ssh -i /home/nws/.ssh/id_rsa nws@157.82.3.112 "sudo bash /home/nws/create.bash {vm_name} {pub_key} {ip}"'.format(
                 vm_name = machine_token,
                 pub_key = '/tmp/{0}.pub'.format(ssh_key_name),
                 ip = ip.address
             ))
     return HttpResponse(json.dumps(res))
 
+# VM 起動
+def machines_start(request, machine_token):
+    res = {}
+    if request.user.is_authenticated():
+        m = Machine.objects.get(machine_token=machine_token)
+        con = libvirt.open("qemu+tls://157.82.3.112/system")
+        dom = con.lookupByName(m.machine_token)
+        info = dom.info()
+        if info[0] != 1: #VIR_DOMAIN_RUNNING
+            dom.create()
+        m.status = 1
+        m.save()
+    return HttpResponse(json.dumps(res))
+
+# VM 終了
+def machines_stop(request, machine_token):
+    res = {}
+    if request.user.is_authenticated():
+        m = Machine.objects.get(machine_token=machine_token)
+        con = libvirt.open("qemu+tls://157.82.3.112/system")
+        dom = con.lookupByName(m.machine_token)
+        info = dom.info()
+        if info[0] != 5: #VIR_DOMAIN_SHUTOFF
+            dom.destroy()
+        m.status = 0
+        m.save()
+    return HttpResponse(json.dumps(res))
+
+# VM 削除
 def machines_destroy(request, machine_token):
     if request.user.is_authenticated():
         m = Machine.objects.get(machine_token=machine_token)
+        con = libvirt.open("qemu+tls://157.82.3.112/system")
+        dom = con.lookupByName(m.machine_token)
+        info = dom.info();
+        if info[0] != 5: #VIR_DOMAIN_SHUTOFF
+            dom.destroy()
+        dom.undefine()
         ip = m.ip
         ip.is_used = False
         ip.save()
@@ -132,7 +184,6 @@ def machines_downloadkey(request, machine_token):
     m = Machine.objects.get(machine_token=machine_token)
     private_key = '{0}_{1}'.format(request.user.username, m.name)
     response = HttpResponse(open('/tmp/{0}'.format(private_key),'rb').read(), content_type='text/plain')
-    # ユーザにDLさせる鍵は~.pemの形に
     response['Content-Type'] = 'application/force-download'
     response['Content-Disposition'] = 'filename={0}.pem'.format(private_key)
     os.system('rm /tmp/{0}'.format(private_key))
