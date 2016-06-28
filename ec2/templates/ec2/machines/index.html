@@ -86,7 +86,7 @@
             </div>
             <div class="modal-footer">
                 <div class="col-xs-10 col-xs-offset-2">
-                    <button type="submit" class="btn btn-primary">Launch</button>
+                    <button type="submit" id="submit-launch" class="btn btn-primary">Launch</button>
                 </div>
             </div>
             </form>
@@ -108,7 +108,9 @@ $("#newInstanceModal").modal(options);
 $(function() {
     $('#newInstanceForm').submit(function(event) {
         event.preventDefault();
+        $('#submit-launch').attr('disabled','disabled');
         $('#newInstanceModal').modal('hide');
+        $('#newInstanceForm')
         display_launching();
         $.ajax({
             dataType: 'json',
@@ -116,6 +118,7 @@ $(function() {
             url: '{% url "ec2:launch" %}',
             success: function(data, dataType) {
                 remove_launching();
+                $('#submit-launch').removeAttr('disabled');
                 if (data['isvalid'] == true) {
                     $('#newInstanceForm')[0].reset();
                     register_token(data['machine_token']);
@@ -310,10 +313,6 @@ first_draw = function() {
             alert('通信に失敗しました:' + stat)
         }
     });
-};
-
-clear_list = function() {
-    $('.list-group').empty();
 };
 
 display_launching = function() {
