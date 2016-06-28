@@ -40,7 +40,7 @@
             <tr>
                 <th>Name</th>
                 <th>CPU (core)</th>
-                <th>Memory</th>
+                <th>Memory (GB)</th>
                 <th>IP address</th>
                 <th>status/control</th>
             </tr>
@@ -167,7 +167,7 @@ machine_info_to_row = function(machine) {
     tr.append('<th>' + machine['name'] + '</th>');
     tr.append('<th>' + machine['core'] + '</th>');
     tr.append('<th>' + machine['memory'] + '</th>');
-    tr.append('<th>' + machine['ip_addr'] + '</th>')
+    tr.append('<th> 157.82.3.' + machine['ip_addr'] + '</th>')
 
     <!-- machine state and control dropdown menu -->
     var token = machine['machine_token'];
