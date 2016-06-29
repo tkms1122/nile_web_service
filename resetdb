@@ -2,7 +2,7 @@
 
 rm ec2/migrations/*
 rm db.sqlite3
-python manage.py makemigrations
-python manage.py makemigrations ec2
-python manage.py migrate
-python manage.py loaddata IP.json
+python3 manage.py makemigrations
+python3 manage.py makemigrations ec2
+python3 manage.py migrate
+python3 manage.py loaddata IP.json
