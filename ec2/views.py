@@ -195,6 +195,8 @@ def machines_getlist(request):
         machines = filter(lambda m: m.auth_user.username == request.user.username, machines)
         for idx, machine in enumerate(machines):
             _dict = __Machine_to_dict__(machine)
+            private_key = '{0}_{1}'.format(request.user.username, machine.name)
+            _dict['sshkey_exist'] = os.path.exists('/tmp/{0}'.format(private_key))
             res[idx] = _dict
         return HttpResponse(json.dumps(res))
     return HttpResponse(json.dumps(res))
