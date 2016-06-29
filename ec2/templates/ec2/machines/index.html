@@ -202,7 +202,7 @@ machine_info_row_children = function(machine) {
     children.push('<th>' + machine['name'] + '</th>');
     children.push('<th>' + machine['core'] + '</th>');
     children.push('<th>' + machine['memory'] + '</th>');
-    children.push('<th> 157.82.3.' + machine['ip_addr'] + '</th>')
+    children.push('<th> 157.82.3.' + machine['ip_addr'] + '</th>');
 
     <!--------------------------------------------->
     <!-- machine state and control dropdown menu -->
@@ -282,12 +282,17 @@ machine_info_row_children = function(machine) {
     ul.append(li);
 
     <!-- dropdown menu: download key -->
-    var li = $('<li></li>');
-    var dlkey = "{% url 'ec2:downloadkey' '0' %}";
-    dlkey = dlkey.substring(0, dlkey.length - 2) + token;
-    var dlkey_link = $('<a href="' + dlkey +'" download>Download Key</a>');
-    li.append(dlkey_link);
-    ul.append(li);
+    if (machine['sshkey_exist']){
+        var li = $('<li></li>');
+        var dlkey = "{% url 'ec2:downloadkey' '0' %}";
+        dlkey = dlkey.substring(0, dlkey.length - 2) + token;
+        var dlkey_link = $('<a href="' + dlkey +'" download>Download Key</a>');
+        dlkey_link.click(function(event){
+            $(this).parent().hide();
+        });
+        li.append(dlkey_link);
+        ul.append(li);
+    }
 
     dropdown.append(ul);
     th.append(dropdown);
