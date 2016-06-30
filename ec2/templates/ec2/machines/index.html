@@ -124,7 +124,7 @@ $(function() {
                     register_token(data['machine_token']);
                     $('#instanceTable').append(machine_info_to_row(data));
                 } else {
-                    alert('something is wrong')
+                    alert(data['reason'])
                 }
             },
             error: function(request, stat, err) {
