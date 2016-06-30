@@ -177,6 +177,7 @@ def machines_downloadkey(request, machine_token):
     return response
 
 def __Machine_to_dict__(m):
+    private_key = '{0}_{1}'.format(m.auth_user.username, m.name)
     return {
             'username': m.auth_user.username,
             'machine_token': str(m.machine_token),
@@ -184,7 +185,8 @@ def __Machine_to_dict__(m):
             'core': m.core,
             'memory': m.memory,
             'status': m.status,
-            'ip_addr': m.ip.address
+            'ip_addr': m.ip.address,
+            'sshkey_exist' : os.path.exists('/tmp/{0}'.format(private_key))
     }
 
 def machines_getlist(request):
@@ -195,8 +197,6 @@ def machines_getlist(request):
         machines = filter(lambda m: m.auth_user.username == request.user.username, machines)
         for idx, machine in enumerate(machines):
             _dict = __Machine_to_dict__(machine)
-            private_key = '{0}_{1}'.format(request.user.username, machine.name)
-            _dict['sshkey_exist'] = os.path.exists('/tmp/{0}'.format(private_key))
             res[idx] = _dict
         return HttpResponse(json.dumps(res))
     return HttpResponse(json.dumps(res))
