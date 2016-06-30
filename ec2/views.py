@@ -84,11 +84,11 @@ def machines_launch(request):
     def validate(name,core,mem,token,ip):
         # TODO: invalidの理由を含める
         if ip == None:
-            return False
+            return {'isvalid':False, 'reason':'no available computer'}
         elif len(name) <= 3:
-            return False
+            return {'isvalid':False, 'reason':'too short name'}
         else:
-            return True
+            return {'isvalid':True}
 
     res = {}
     if request.user.is_authenticated():
@@ -101,8 +101,9 @@ def machines_launch(request):
         ip = unusedIPs[0] if len(unusedIPs) > 0 else None
 
         isvalid = validate(machine_name, cpu_core, memory_size, machine_token, ip)
-        res['isvalid'] = isvalid
-        if isvalid:
+        res.update(isvalid)
+
+        if isvalid['isvalid']:
             #　machineテーブルに追加
             m = Machine(auth_user=request.user, ip=ip, machine_token=machine_token, name=machine_name, core=cpu_core, memory=memory_size, status=1)
             res.update(__Machine_to_dict__(m));
