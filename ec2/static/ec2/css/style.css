@@ -5,20 +5,14 @@
     width:108px;
 }
 
-/* .public-banner .logo { */
-    /* position: relative; */
-    /* height: 164px; */
-    /* width: auto; */
-/* } */
+.footer{
+    background-color: #ccc;
+    text-align: center;
+}
 
-.public-banner {
-    position: relative;
-    background: url("../../img/egypt.jpg") no-repeat center;
-    padding: 0;
-    width: 100%;
-    max-width: 960px;
-    height: 434px;
-    vertical-align: middle;
+.container .jumbotron{
+    background: url("../../img/nile-river.jpg") center no-repeat;
+    background-size: cover;
 }
 
 .public-banner img {
@@ -53,3 +47,29 @@
 .btn {
     margin-bottom: 5px;
 }
+
+/*
+ * This sticky footer css is
+ * obtained from bootstrap examples page.
+ * http://getbootstrap.com/examples/sticky-footer/
+ */
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
+
